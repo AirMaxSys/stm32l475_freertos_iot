@@ -10,7 +10,6 @@
       <TargetName>stm32l475_freertos_iot</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pArmCC>6130001::V6.13.1::.\ARMCLANG</pArmCC>
       <pCCUsed>6130001::V6.13.1::.\ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
@@ -339,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32L475xx,NDEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Drivers/CMSIS/Include;..\Config;..\BSP;..\BSP\gui;..\BSP\lvgl_layer;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\include;..\Thirdparty\lvgl-v8.0.0;..\Thirdparty\lvgl-v8.0.0\examples</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Drivers/CMSIS/Include;..\Drivers\CMSIS\RTOS2\Include;..\Config;..\BSP;..\BSP\gui;..\BSP\lvgl_layer;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\include;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\portable\GCC\ARM_CM4F;..\Thirdparty\lvgl-v8.0.0;..\Thirdparty\lvgl-v8.0.0\examples</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1079,14 +1078,14 @@
               <FilePath>..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\timers.c</FilePath>
             </File>
             <File>
-              <FileName>port.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\portable\RVDS\ARM_CM4F\port.c</FilePath>
-            </File>
-            <File>
               <FileName>heap_4.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\portable\MemMang\heap_4.c</FilePath>
+            </File>
+            <File>
+              <FileName>port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\portable\GCC\ARM_CM4F\port.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -21,9 +21,10 @@ i2c_soft_t *p_i2c_sf;
 /* delay tiny duration*/
 static void delay(void)
 {
-    for (int i = 0; i < 10; ++i)
-        for (int k = 0; k < 1000; ++k)
-            __NOP();
+    volatile uint16_t i, j;
+    for (i = 0; i < 100; ++i)
+        for (j = 0; j < 100; ++j)
+            __asm volatile ("nop");
 }
 
 i2c_soft_err_enum_t i2c_soft_init(i2c_soft_t *i2c)
@@ -227,10 +228,7 @@ i2c_soft_err_enum_t i2c_soft_recv_datas(uint8_t *rxbuf, uint16_t len)
         if (i == len - 1) {
             // fetch data and send nack
             rxbuf[i] = i2c_soft_recv_byte(0);
-            /* enable stop condotion*/
-            __disable_irq();
             i2c_soft_gen_stop_cond();
-            __enable_irq();
             break;
         }
         rxbuf[i] = i2c_soft_recv_byte(1);

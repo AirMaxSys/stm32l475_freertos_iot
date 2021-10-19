@@ -1,7 +1,7 @@
 #include "aht10.h"
 #include "proj_config.h"
 
-#define AHT10_DBG	0
+#define AHT10_DBG	1
 
 #define AHT10_I2C_ADDR		0x38u
 /* AHT10 commands*/
@@ -34,7 +34,7 @@ static void aht10_calibrate(void)
     uint8_t tmp[] = {AHT10_NORMAL_CMD, 0x0, 0};
 	uint8_t cmd[] = {AHT10_CMD_CALIBRATE, 0x8, 0};
 	
-	i2c_soft_send_datas(cmd, 3, 1);
+	i2c_soft_send_datas(tmp, 3, 1);
     portDelayMs(500);
 
 	i2c_soft_send_datas(cmd, 3, 1);
@@ -46,13 +46,13 @@ void aht10_init(aht10_t *paht)
 	if (!paht)	return;
 
 	i2c_soft_init(&aht10_i2c_dev);
+
+	aht10_calibrate();
 #if AHT10_DBG == 1
 	printf("AHT10 init ok, status value is:0x%02x\r\n", aht10_status_reg());
 #endif
 	paht->temp = paht->humi = 0;
 	memset(paht->buf, 0x0, AHT10_BUFFER_SIZE);
-
-	aht10_calibrate();
 }
 
 void aht10_get_value(aht10_t *paht)

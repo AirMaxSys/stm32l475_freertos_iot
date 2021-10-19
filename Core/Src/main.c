@@ -45,7 +45,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "timer.h"
+#include "timers.h"
 
 /* USER CODE END Includes */
 
@@ -95,11 +95,14 @@ void temp_humi_smaple_task(void *argv)
 	aht10_t aht10;
 
 	// Wait sensor start work
-	portDelayMs(1000);
+	portDelayMs(2000);
 
 	aht10_init(&aht10);
 
 	while (1) {
+        // Smaple period
+        portDelayMs(1000);
+        
 		aht10_get_value(&aht10);
 
         // Put data to message queue
@@ -110,9 +113,6 @@ void temp_humi_smaple_task(void *argv)
             xQueueSend(TH_msgQ, TH_msgQ_buf, 0);
 #endif
         }
-
-        // Smaple period
-        portDelayMs(1000);
 	}
 }
 
@@ -134,7 +134,6 @@ void gui_task(void *argv)
     (void)(argv);
     lv_obj_t *lb_temp, *lb_humi;
     lv_obj_t *img_temp, *img_humi;
-    osStatus_t status;
 
     lv_init();
     tft_lvgl_layer_init();
@@ -194,8 +193,6 @@ int main(void)
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
-  // HAL_init_systick_for_RTX();
-
 #if USING_FREERTOS == 1
     TH_msgQ = xQueueCreate(1, sizeof(TH_msgQ_buf));
 
@@ -203,31 +200,7 @@ int main(void)
     xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
     xTaskCreate(gui_task, "GUI", 1024, NULL, 3, NULL);
 
-    vTask_StartScheduler();
-#elif USING_CMSIS_RTOS2 == 1
-  // Initialize CMSIS-RTOS
-  osKernelInitialize();
-
-  // Create message queue for GUI and temperature and humidy smaple task
-  th2gui_msg_id = osMessageQueueNew(2, 2*sizeof(uint16_t), NULL);
-  if (th2gui_msg_id == NULL) {
-      for (;;);
-  }
-  // Create tasks
-  osThreadNew(led_blink_task, NULL, NULL);
-
-  osThreadNew(temp_humi_smaple_task, NULL, NULL);
-
-#if TEST_ST7789_DRIVER == 1
-  osThreadNew(lcd_display_task, NULL, NULL);
-#endif
-
-#if TEST_LVGL_LIB == 1
-  osThreadNew(gui_task, NULL, NULL);
-#endif
-
-  // Start task excution
-  osKernelStart();
+    vTaskStartScheduler();
 
 #endif
 
