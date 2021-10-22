@@ -52,6 +52,8 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
+  extern int wiced_scan_main();
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -193,7 +195,9 @@ int main(void)
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
-#if USING_FREERTOS == 1
+  wiced_scan_main();
+
+#if USING_FREERTOS == 0
     TH_msgQ = xQueueCreate(1, sizeof(TH_msgQ_buf));
 
     xTaskCreate(led_blink_task, "LED", configMINIMAL_STACK_SIZE, NULL, 0, NULL);

@@ -3,10 +3,6 @@ MDK-ARM/**
 !MDK-ARM/*.uvoptx
 !MDK-ARM/*.uvprojx
 out/
-build/
-# LVGL build system
-*.mk
 
-Thirdparty/lwip*
-Thirdparty/paho*
-Thirdparty/wifi
+build/
+*.mk
