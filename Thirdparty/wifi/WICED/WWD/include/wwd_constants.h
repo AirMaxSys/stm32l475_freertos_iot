@@ -73,15 +73,15 @@ extern int DIV_ROUND_UP (int m, /*@sef@*/ int n); /* LINT : This tells lint that
 #endif /* ifndef DIV_ROUND_UP */
 
 #ifndef PLATFORM
-#define PLATFORM "Unknown"
+#define PLATFORM "STM32L475(BCM43362)"
 #endif /* ifndef PLATFORM */
 
 #ifndef FreeRTOS_VERSION
-#define FreeRTOS_VERSION "Unknown"
+#define FreeRTOS_VERSION "V10.0.0"
 #endif /* ifndef FreeRTOS_VERSION */
 
 #ifndef LwIP_VERSION
-#define LwIP_VERSION "Unknown"
+#define LwIP_VERSION "V2.1.2"
 #endif /* ifndef LwIP_VERSION */
 
 #ifndef WICED_VERSION

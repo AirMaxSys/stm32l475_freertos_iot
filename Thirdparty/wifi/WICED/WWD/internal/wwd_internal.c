@@ -45,7 +45,7 @@
 #include "network/wwd_buffer_interface.h"
 #include "network/wwd_network_constants.h"
 #include "wwd_assert.h"
-#include "wifi_utils.h"
+//#include "wifi_utils.h"
 /******************************************************
  *                      Macros
  ******************************************************/

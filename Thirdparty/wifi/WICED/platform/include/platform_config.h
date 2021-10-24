@@ -94,17 +94,17 @@ extern "C" {
  ******************************************************/
 
 /*  GPIO pins are used to bootstrap Wi-Fi to SDIO or gSPI mode */
-#define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_0
-#define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_1
+// #define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_0
+// #define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_1
 
 /*  Wi-Fi GPIO0 pin is used for out-of-band interrupt */
 #define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 1 )
 
 /*  Wi-Fi power pin is present */
-#define WICED_USE_WIFI_POWER_PIN    1
+#define WICED_USE_WIFI_POWER_PIN
 
 /*  Wi-Fi reset pin is present */
-#define WICED_USE_WIFI_RESET_PIN    0
+//#define WICED_USE_WIFI_RESET_PIN
 
 /*  WLAN Powersave Clock Source
  *  The WLAN sleep clock can be driven from one of two sources:
@@ -121,7 +121,7 @@ extern "C" {
 #endif
 
 /*  OTA */
-#define PLATFORM_HAS_OTA    0
+//#define PLATFORM_HAS_OTA
 
 #ifdef __cplusplus
 } /* extern "C" */

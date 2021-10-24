@@ -61,7 +61,7 @@
 #include "wiced_wifi.h"
 #include "wwd_ap_common.h"
 #include "wwd_wifi.h"
-#include "wiced_management.h"
+//#include "wiced_management.h"
 
 /******************************************************
  * @cond       Constants

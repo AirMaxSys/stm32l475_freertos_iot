@@ -42,7 +42,7 @@
 #include "wwd_wifi.h"
 #include "wwd_debug.h"
 #include "wiced_rtos.h"
-#include "wiced_tcpip.h"
+//#include "wiced_tcpip.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

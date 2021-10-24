@@ -77,7 +77,8 @@ wwd_result_t host_buffer_add_application_defined_pool( void* pool_in, wwd_buffer
 
 static void wiced_pbuf_free( struct pbuf *p )
 {
-    if ( p->type == PBUF_POOL_RX )
+    if (pbuf_match_type(p, PBUF_POOL_RX))
+    //if ( p->type == PBUF_POOL_RX )
     {
         memp_free_pool( application_defined_rx_pool, p );
     }

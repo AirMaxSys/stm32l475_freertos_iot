@@ -47,7 +47,7 @@
 #include "platform_toolchain.h"
 #include "internal/wwd_ap_common.h"
 #include "wiced_result.h"
-#include "wifi_utils.h"
+//#include "wifi_utils.h"
 
 static wiced_bool_t ap_is_up = WICED_FALSE;
 

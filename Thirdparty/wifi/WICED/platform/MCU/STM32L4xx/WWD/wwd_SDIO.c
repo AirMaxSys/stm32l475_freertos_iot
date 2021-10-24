@@ -208,7 +208,7 @@ wwd_result_t host_platform_bus_init( void )
     {
         if ( PLATFORM_SUCCESS != platform_gpio_set_alternate_function( wifi_sdio_pins[ a ].port, wifi_sdio_pins[ a ].pin_number, GPIO_MODE_AF_PP, GPIO_PULLUP, GPIO_AF12_SDMMC1 ) )
         {
-            return WICED_ERROR;
+            return (wwd_result_t)WICED_ERROR;
         }
     }
 
@@ -232,7 +232,7 @@ wwd_result_t host_platform_bus_init( void )
 
     if ( HAL_return != HAL_OK )
     {
-        return WICED_ERROR;
+        return (wwd_result_t)WICED_ERROR;
     }
 
     channelindex = ( ( (uint32_t) DMA2_Channel4 - (uint32_t) DMA2_Channel1 ) / ( (uint32_t) DMA2_Channel2 - (uint32_t) DMA2_Channel1 ) ) << 2;
@@ -352,7 +352,8 @@ wwd_result_t host_platform_sdio_transfer( wwd_bus_transfer_direction_t direction
     DMA2_Channel4->CCR = 0;
     platform_mcu_powersave_disable( );
 
-    restart: SDMMC1->ICR = (uint32_t) 0xFFFFFFFF;
+restart:
+    SDMMC1->ICR = (uint32_t) 0xFFFFFFFF;
     sdio_transfer_failed = WICED_FALSE;
     ++attempts;
 
@@ -460,7 +461,8 @@ wwd_result_t host_platform_sdio_transfer( wwd_bus_transfer_direction_t direction
      result = WWD_SUCCESS;
      SDMMC1->CMD = 0;
 
-     exit: platform_mcu_powersave_enable( );
+exit:
+     platform_mcu_powersave_enable( );
      return result;
 }
 
@@ -497,7 +499,7 @@ wwd_result_t host_platform_bus_disable_interrupt( void )
 wwd_result_t host_platform_unmask_sdio_interrupt( void )
 {
     SDMMC1->MASK |= SDMMC_MASK_SDIOITIE;
-    return WICED_SUCCESS;
+    return (wwd_result_t)WICED_SUCCESS;
 }
 
 void host_platform_bus_buffer_freed( wwd_buffer_dir_t direction )

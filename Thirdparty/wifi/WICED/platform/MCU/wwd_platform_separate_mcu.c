@@ -42,7 +42,7 @@
 #include "wwd_platform_common.h"
 #include "wwd_assert.h"
 #include "platform/wwd_platform_interface.h"
-#include "wiced_framework.h"
+//#include "wiced_framework.h"
 
 /******************************************************
  *                      Macros

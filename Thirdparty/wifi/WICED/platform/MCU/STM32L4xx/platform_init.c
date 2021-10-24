@@ -65,7 +65,7 @@
 /******************************************************
  *               Static Function Declarations
  ******************************************************/
-
+#if 0
 #if !defined ( BOOTLOADER )
 static void SystemClock_Config( void )
 {
@@ -141,7 +141,7 @@ static void SystemClock_Config( void )
 }
 
 #endif /* !defined ( BOOTLOADER ) */
-
+#endif
 /******************************************************
  *               Variable Definitions
  ******************************************************/
@@ -205,7 +205,7 @@ void platform_init_mcu_infrastructure( void )
 
     /* Initialise GPIO IRQ manager */
     platform_gpio_irq_manager_init( );
-
+#if 0
 #ifndef WICED_DISABLE_MCU_POWERSAVE
     /* Initialise MCU powersave */
     platform_mcu_powersave_init( );
@@ -213,7 +213,7 @@ void platform_init_mcu_infrastructure( void )
 
     /* Initialize RTC */
     platform_rtc_init( );
-
+#endif
 #endif /* ifndef WICED_DISABLE_MCU_POWERSAVE */
 }
 

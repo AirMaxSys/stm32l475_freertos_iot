@@ -36,7 +36,7 @@
  */
 
 #include "network/wwd_buffer_interface.h"
-#include "wwd_network_constants.h"
+#include "network/wwd_network_constants.h"
 #include "wwd_eapol.h"
 #include <stdio.h>
 

@@ -491,7 +491,8 @@ typedef uint16_t wiced_dct_sdk_ver_t;
 
 /* TODO: find platform-specific file to allow other defines for these */
 #ifndef CRC_INIT_VALUE
-#include "../../utilities/crc/crc.h"
+//#include "../../utilities/crc/crc.h"
+#include "/crc.h"
 #define CRC_INIT_VALUE                              CRC32_INIT_VALUE
 #define CRC_FUNCTION(address, size, previous_value) (uint32_t)crc32(address, size, previous_value)
 typedef uint32_t    CRC_TYPE;

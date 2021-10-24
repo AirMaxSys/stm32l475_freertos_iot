@@ -103,12 +103,12 @@ void hal_rcc_gpioh_clock_enable( void )
 {
     __HAL_RCC_GPIOH_CLK_ENABLE( );
 }
-
+#if 0
 void hal_rcc_gpioi_clock_enable( void )
 {
     __HAL_RCC_GPIOI_CLK_ENABLE( );
 }
-
+#endif
 void hal_rcc_gpioa_clock_disable( void )
 {
     __HAL_RCC_GPIOA_CLK_DISABLE( );
@@ -148,12 +148,12 @@ void hal_rcc_gpioh_clock_disable( void )
 {
     __HAL_RCC_GPIOH_CLK_DISABLE( );
 }
-
+#if 0
 void hal_rcc_gpioi_clock_disable( void )
 {
     __HAL_RCC_GPIOI_CLK_DISABLE( );
 }
-
+#endif
 /* GPIO peripheral clock enable functions */
 const platform_gpio_clock_enable_function_t platform_gpio_clock_enable_function[ NUMBER_OF_GPIO_PORTS ] =
 {
@@ -165,7 +165,7 @@ const platform_gpio_clock_enable_function_t platform_gpio_clock_enable_function[
     [5]  = hal_rcc_gpiof_clock_enable,
     [6]  = hal_rcc_gpiog_clock_enable,
     [7]  = hal_rcc_gpioh_clock_enable,
-    [8]  = hal_rcc_gpioi_clock_enable,
+    //[8]  = hal_rcc_gpioi_clock_enable,
 };
 
 /* GPIO peripheral clock disable functions */
@@ -179,7 +179,7 @@ const platform_gpio_clock_disable_function_t platform_gpio_clock_disable_functio
     [5]  = hal_rcc_gpiof_clock_disable,
     [6]  = hal_rcc_gpiog_clock_disable,
     [7]  = hal_rcc_gpioh_clock_disable,
-    [8]  = hal_rcc_gpioi_clock_disable,
+    //[8]  = hal_rcc_gpioi_clock_disable,
 };
 
 /******************************************************
@@ -190,7 +190,8 @@ uint8_t platform_gpio_get_port_number( platform_gpio_port_t * gpio_port )
 {
     uint8_t port_index = ( (uint32_t) gpio_port - GPIOA_BASE ) / 0x400;
 
-    if ( ( (uint32_t) gpio_port < GPIOA_BASE ) || ( (uint32_t) gpio_port > GPIOI_BASE ) )
+    //if ( ( (uint32_t) gpio_port < GPIOA_BASE ) || ( (uint32_t) gpio_port > GPIOI_BASE ) )
+    if ( ( (uint32_t) gpio_port < GPIOA_BASE ) || ( (uint32_t) gpio_port > GPIOH_BASE ) )
     {
         return INVALID_GPIO_PORT_NUMBER;
     }

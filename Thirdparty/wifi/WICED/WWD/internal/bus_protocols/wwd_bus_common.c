@@ -47,7 +47,7 @@
 #include "platform_toolchain.h"
 #include "wwd_structures.h"
 #include "platform_isr.h"
-#include "wwd_rtos_interface.h"
+#include "RTOS/wwd_rtos_interface.h"
 #include "platform_mcu_peripheral.h"
 
 /******************************************************

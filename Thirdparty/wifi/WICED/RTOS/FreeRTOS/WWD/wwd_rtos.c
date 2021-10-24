@@ -81,6 +81,7 @@ wwd_result_t host_rtos_create_thread( /*@out@*/ host_thread_type_t* thread, void
 
 wwd_result_t host_rtos_create_thread_with_arg( /*@out@*/ host_thread_type_t* thread, void(*entry_function)( uint32_t ), const char* name, /*@null@*/ void* stack, uint32_t stack_size, uint32_t priority, uint32_t arg )
 {
+#if 0
     if ( stack )
     {
         uint32_t tcb_size, adjusted_stack_size;
@@ -97,6 +98,7 @@ wwd_result_t host_rtos_create_thread_with_arg( /*@out@*/ host_thread_type_t* thr
         return ( *thread == NULL ) ? WWD_THREAD_CREATE_FAILED : WWD_SUCCESS;
     }
     else
+#endif
     {
         signed portBASE_TYPE result;
 

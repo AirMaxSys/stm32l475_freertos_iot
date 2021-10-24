@@ -49,7 +49,7 @@
 
 #include "wwd_assert.h"
 
-#include "wwd_rtos_interface.h"
+#include "RTOS/wwd_rtos_interface.h"
 
 /******************************************************
  *                      Macros

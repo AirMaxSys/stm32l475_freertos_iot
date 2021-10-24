@@ -3064,6 +3064,16 @@ TaskHandle_t pvTaskIncrementMutexHeldCount( void ) PRIVILEGED_FUNCTION;
 void vTaskInternalSetTimeOutState( TimeOut_t * const pxTimeOut ) PRIVILEGED_FUNCTION;
 
 
+// Port for BCM WICED SDK
+/**
+ * task. h
+ * <pre>signed portBASE_TYPE xTaskIsTaskFinished( xTaskHandle xTask );</pre>
+ *
+ * Utility task that simply returns pdTRUE if the task has terminated.
+ *
+ */
+signed portBASE_TYPE xTaskIsTaskFinished( TaskHandle_t xTask ) PRIVILEGED_FUNCTION;
+
 /* *INDENT-OFF* */
 #ifdef __cplusplus
     }

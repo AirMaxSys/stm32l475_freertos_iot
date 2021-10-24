@@ -9,7 +9,7 @@
 #include "platform/wwd_platform_interface.h"
 #include "lwip/tcpip.h"
 #include "wiced_utilities.h"
-#include "wwd_buffer_interface.h"
+#include "network/wwd_buffer_interface.h"
 
 /******************************************************
  *                      Macros

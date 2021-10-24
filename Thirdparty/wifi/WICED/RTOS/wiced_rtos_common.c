@@ -48,7 +48,6 @@
 #include "wiced_result.h"
 #include "wiced_rtos_common.h"
 #include "platform_config.h"
-#include "wwd_rtos_interface.h"
 
 /******************************************************
  *                      Macros

@@ -35,7 +35,7 @@
  *  Implementation of wwd_rtos_interface.c for all RTOS
  */
 #include "wwd_constants.h"
-#include "wwd_rtos_interface.h"
+#include "RTOS/wwd_rtos_interface.h"
 #include "wwd_assert.h"
 
 /******************************************************
