@@ -148,6 +148,8 @@ void *memp_malloc(memp_t type);
 #endif
 void  memp_free(memp_t type, void *mem);
 
+int memp_in_use(memp_t type);
+
 #ifdef __cplusplus
 }
 #endif

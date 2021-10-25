@@ -445,3 +445,18 @@ memp_free(memp_t type, void *mem)
   }
 #endif
 }
+
+// Port for WICED
+int memp_in_use( memp_t type )
+{
+    struct memp *memp = *memp_pools[type]->tab;
+    int available_buffers = 0;
+
+    while( memp != NULL )
+    {
+        memp = memp->next;
+        available_buffers++;
+    }
+
+    return memp_pools[type]->num - available_buffers;
+}

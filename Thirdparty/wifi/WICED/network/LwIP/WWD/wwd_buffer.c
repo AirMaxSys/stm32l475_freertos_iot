@@ -56,8 +56,8 @@ wwd_result_t wwd_buffer_init( /*@null@*/ /*@unused@*/ void * native_arg )
 
 wwd_result_t host_buffer_check_leaked( void )
 {
-    wiced_assert( "pbuf TX pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL_TX ) == 0 );
-    wiced_assert( "pbuf RX pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL_RX ) == 0 );
+    //wiced_assert( "pbuf TX pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL_TX ) == 0 );
+    wiced_assert( "pbuf pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL ) == 0 );
     wiced_assert( "pbuf ref/rom Buffer leakage", memp_in_use( MEMP_PBUF ) == 0 );
     return WWD_SUCCESS;
 }
@@ -77,7 +77,7 @@ wwd_result_t host_buffer_add_application_defined_pool( void* pool_in, wwd_buffer
 
 static void wiced_pbuf_free( struct pbuf *p )
 {
-    if (pbuf_match_type(p, PBUF_POOL_RX))
+    if (pbuf_match_type(p, PBUF_POOL))
     //if ( p->type == PBUF_POOL_RX )
     {
         memp_free_pool( application_defined_rx_pool, p );
@@ -102,7 +102,8 @@ wwd_result_t internal_host_buffer_get( wiced_buffer_t * buffer, wwd_buffer_dir_t
         void *custom_mem;
         struct memp_desc *application_defined_pool = ( direction == WWD_NETWORK_RX ) ? application_defined_rx_pool : application_defined_tx_pool;
 
-        *buffer = pbuf_alloc( PBUF_RAW, size, ( direction == WWD_NETWORK_RX ) ? PBUF_POOL_RX : PBUF_POOL_TX );
+        // *buffer = pbuf_alloc( PBUF_RAW, size, ( direction == WWD_NETWORK_RX ) ? PBUF_POOL_RX : PBUF_POOL_TX );
+        *buffer = pbuf_alloc( PBUF_RAW, size, PBUF_POOL);
         if ( *buffer != NULL )
         {
             PBUF_STATS_INCREMENT_VARIABLE( pbuf_alloc_raw_host_buffer);
@@ -118,7 +119,8 @@ wwd_result_t internal_host_buffer_get( wiced_buffer_t * buffer, wwd_buffer_dir_t
                 struct pbuf_custom *pbuf = (struct pbuf_custom*)custom_mem;
                 void *payload = LWIP_MEM_ALIGN(pbuf + 1);
                 pbuf->custom_free_function = wiced_pbuf_free;
-                *buffer = pbuf_alloced_custom( PBUF_RAW, size, ( direction == WWD_NETWORK_RX ) ? PBUF_POOL_RX : PBUF_POOL_TX, pbuf, payload, PBUF_POOL_BUFSIZE );
+                // *buffer = pbuf_alloced_custom( PBUF_RAW, size, ( direction == WWD_NETWORK_RX ) ? PBUF_POOL_RX : PBUF_POOL_TX, pbuf, payload, PBUF_POOL_BUFSIZE );
+                *buffer = pbuf_alloced_custom( PBUF_RAW, size, PBUF_POOL, pbuf, payload, PBUF_POOL_BUFSIZE );
                 break;
             }
         }
@@ -269,6 +271,7 @@ wiced_bool_t host_buffer_pool_is_full( wwd_buffer_dir_t direction )
 
 void memp_free_notify( unsigned int type )
 {
+#if 0
     if ( type == MEMP_PBUF_POOL_TX )
     {
         host_platform_bus_buffer_freed( WWD_NETWORK_TX );
@@ -277,4 +280,5 @@ void memp_free_notify( unsigned int type )
     {
         host_platform_bus_buffer_freed( WWD_NETWORK_RX );
     }
+#endif
 }

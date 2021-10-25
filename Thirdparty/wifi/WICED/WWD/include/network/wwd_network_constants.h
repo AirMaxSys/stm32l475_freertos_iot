@@ -39,6 +39,7 @@
 
 
 #include "platform_cache_def.h"
+#include "arch/sys_arch.h"
 
 #ifndef MAX
 #define MAX(a, b)   (((a) > (b)) ? (a) : (b))

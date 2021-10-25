@@ -1376,7 +1376,7 @@ static wwd_result_t wwd_wifi_prepare_join( wwd_interface_t interface, wiced_secu
         }
     }
 
-    check_result = wwd_wifi_set_iovar_value ( IOVAR_STR_MFP, auth_mfp , WWD_STA_INTERFACE );
+    check_result = (wiced_result_t)wwd_wifi_set_iovar_value ( IOVAR_STR_MFP, auth_mfp , WWD_STA_INTERFACE );
     if ( check_result != WICED_SUCCESS )
     {
         WPRINT_WWD_DEBUG( ( "Older chipsets might not support MFP..Ignore result\n" ) );
@@ -1635,7 +1635,7 @@ wwd_wifi_get_cca_for_channel(uint32_t *channels, uint32_t duration, uint8_t *sco
 
     /* Sanity check */
     if (rep_elt->len != 4) {
-        WPRINT_APP_INFO(("%s: rep_elt.len unexpected len (%lu)\n", __FUNCTION__, rep_elt->len));
+        WPRINT_APP_INFO(("%s: rep_elt.len unexpected len (%u)\n", __FUNCTION__, rep_elt->len));
         goto fail;
     }
 
@@ -1651,13 +1651,13 @@ wwd_wifi_get_cca_for_channel(uint32_t *channels, uint32_t duration, uint8_t *sco
             goto fail;
         }
         if (rm_rep->rep[i].dur != duration) {
-            WPRINT_APP_INFO(("%s: Chan %d: Duration %ld != expected %ld\n", __FUNCTION__, rm_rep->rep[i].chanspec & 0xff, rm_rep->rep[i].dur, duration));
+            WPRINT_APP_INFO(("%s: Chan %d: Duration %d != expected %d\n", __FUNCTION__, rm_rep->rep[i].chanspec & 0xff, rm_rep->rep[i].dur, duration));
             goto fail;
         }
 
         /* results need to be in same order we requested so 'scores' will be the same order as 'channels' */
         if ((channels[i] & 0xff) != (rm_rep->rep[i].chanspec & 0xff)) {
-            WPRINT_APP_INFO(("%s: Channel mismatch: Sent %lu, Rx'ed %d\n", __FUNCTION__, channels[i], rm_rep->rep[i].chanspec & 0xff));
+            WPRINT_APP_INFO(("%s: Channel mismatch: Sent %u, Rx'ed %d\n", __FUNCTION__, channels[i], rm_rep->rep[i].chanspec & 0xff));
             goto fail;
         }
 
@@ -1666,7 +1666,7 @@ wwd_wifi_get_cca_for_channel(uint32_t *channels, uint32_t duration, uint8_t *sco
     }
 
     if (i != (int)nchans) {
-        WPRINT_APP_INFO(("%s: Requested channels %ld chans only got %d\n", __FUNCTION__, nchans, i));
+        WPRINT_APP_INFO(("%s: Requested channels %d chans only got %d\n", __FUNCTION__, nchans, i));
         goto fail;
     }
 
@@ -6346,7 +6346,7 @@ wwd_result_t wwd_mesh_status( char *result_buf, uint16_t result_buf_sz )
         return WWD_BUFFER_ALLOC_FAIL;
     }
 
-    result = wwd_sdpcm_send_iovar( SDPCM_GET, buffer, &response, WICED_STA_INTERFACE);
+    result = wwd_sdpcm_send_iovar( SDPCM_GET, buffer, &response, (wwd_interface_t)WICED_STA_INTERFACE);
     if (result != WWD_SUCCESS)
     {
         WPRINT_APP_INFO(("%s: send_iovar failed\n", __FUNCTION__));
@@ -6442,7 +6442,7 @@ wwd_result_t wwd_wifi_interface_up( wwd_interface_t interface )
     data[0] = bss_index;
     data[1] = 1; //BSS_UP;
     if ( wwd_sdpcm_send_iovar( SDPCM_SET, buffer, 0, WWD_STA_INTERFACE ) != WWD_SUCCESS) {
-        WPRINT_APP_INFO(( "%s: Cannot bring up interface %ld\n", __FUNCTION__ , bss_index));
+        WPRINT_APP_INFO(( "%s: Cannot bring up interface %d\n", __FUNCTION__ , bss_index));
         return WWD_WLAN_ERROR;
     }
 

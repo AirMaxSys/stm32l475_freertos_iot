@@ -70,7 +70,7 @@
 #include "lwip/stats.h"
 #include "wiced_utilities.h"
 #include "wiced_crypto.h"
-#include "wwd_rtos_interface.h"
+#include "RTOS/wwd_rtos_interface.h"
 
 /* Message queue constants. */
 #define archMESG_QUEUE_LENGTH     ( (unsigned long) 6 )

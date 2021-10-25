@@ -163,7 +163,7 @@ wwd_result_t host_platform_resource_read_indirect( wwd_resource_t resource, uint
         }
         return WWD_SUCCESS;
 #else
-        return resource_read( &wifi_firmware_image, offset, buffer_size, size_out, buffer );
+        return (wwd_result_t)resource_read( &wifi_firmware_image, offset, buffer_size, size_out, buffer );
 #endif
 #endif
 
