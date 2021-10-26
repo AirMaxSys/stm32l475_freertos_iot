@@ -10,6 +10,7 @@
       <TargetName>stm32l475_freertos_iot</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pArmCC>6130001::V6.13.1::.\ARMCLANG</pArmCC>
       <pCCUsed>6130001::V6.13.1::.\ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
@@ -336,9 +337,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32L475xx,NDEBUG ,WICED_DISABLE_BOOTLOADER,USES_RESOURCE_FILESYSTEM=0,_MSC_VER</Define>
+              <Define>USE_HAL_DRIVER,STM32L475xx,WICED_DISABLE_BOOTLOADER,WICED_DISABLE_MCU_POWERSAVE,_ARMCC_VERSION,NDEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Drivers/CMSIS/Include;..\Drivers\CMSIS\RTOS2\Include;..\Config;..\BSP;..\BSP\gui;..\BSP\lvgl_layer;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\include;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\portable\GCC\ARM_CM4F;..\Thirdparty\lvgl-v8.0.0;..\Thirdparty\lvgl-v8.0.0\examples;..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\include\;..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\include\lwip;..\Thirdparty\wifi\WICED\network\LwIP\WWD;..\Thirdparty\wifi\WICED\network\LwIP\WWD\FreeRTOS;..\Thirdparty\wifi\WICED\WWD\include;..\Thirdparty\wifi\WICED\platform\include;..\Thirdparty\wifi\WICED\platform\MCU;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\WAF;..\Thirdparty\wifi\WICED\platform\ARM_CM4;..\Thirdparty\wifi\WICED\RTOS;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD\ARM_CM3;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WICED;..\Thirdparty\wifi\WICED\internal;..\Thirdparty\wifi\WICED\WPL\include;..\Thirdparty\wifi\WICED\WPL\core\include;..\Thirdparty\wifi\WICED\include;..\Thirdparty\wifi\WICED\security\BESL\include;..\Thirdparty\wifi\WICED\security\BESL\crypto_internal;..\Thirdparty\wifi\WICED\security\BESL\mbedtls_open\include;..\Thirdparty\wifi\WICED\LIB\utilities\ring_buffer;..\Thirdparty\wifi\WICED\LIB\utilities\TLV;..\Thirdparty\wifi\WICED\WWD;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols\SDIO;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols\chips;..\Thirdparty\wifi\WICED\WWD\internal\chips\43362;..\Thirdparty\wifi\WICED;..\Thirdparty\wifi\WICED\LIB\utilities\crc;..\Thirdparty\wifi\WICED\LIB\utilities\linked_list;..\Thirdparty\wifi\WICED\security\BESL\host\WICED;..\Thirdparty\wifi\WICED\network\LwIP\WICED</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Drivers/CMSIS/Include;..\Drivers\CMSIS\RTOS2\Include;..\Config;..\BSP;..\BSP\gui;..\BSP\lvgl_layer;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\include;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\portable\GCC\ARM_CM4F;..\Thirdparty\lvgl-v8.0.0;..\Thirdparty\lvgl-v8.0.0\examples;..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\include\;..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\include\lwip;..\Thirdparty\wifi\WICED\network\LwIP\WWD;..\Thirdparty\wifi\WICED\network\LwIP\WWD\FreeRTOS;..\Thirdparty\wifi\WICED\WWD\include;..\Thirdparty\wifi\WICED\platform\include;..\Thirdparty\wifi\WICED\platform\MCU;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\WAF;..\Thirdparty\wifi\WICED\platform\ARM_CM4;..\Thirdparty\wifi\WICED\RTOS;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD\ARM_CM3;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WICED;..\Thirdparty\wifi\WICED\internal;..\Thirdparty\wifi\WICED\WPL\include;..\Thirdparty\wifi\WICED\WPL\core\include;..\Thirdparty\wifi\WICED\include;..\Thirdparty\wifi\WICED\security\BESL\include;..\Thirdparty\wifi\WICED\security\BESL\crypto_internal;..\Thirdparty\wifi\WICED\security\BESL\mbedtls_open\include;..\Thirdparty\wifi\WICED\LIB\utilities\ring_buffer;..\Thirdparty\wifi\WICED\LIB\utilities\TLV;..\Thirdparty\wifi\WICED\WWD;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols\SDIO;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols\chips;..\Thirdparty\wifi\WICED\WWD\internal\chips\43362;..\Thirdparty\wifi\WICED;..\Thirdparty\wifi\WICED\LIB\utilities\crc;..\Thirdparty\wifi\WICED\LIB\utilities\linked_list;..\Thirdparty\wifi\WICED\security\BESL\host\WICED;..\Thirdparty\wifi\WICED\network\LwIP\WICED;..\Thirdparty\wifi\WICED\platform\ARM_CM4\CMSIS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1213,11 +1214,6 @@
               <FilePath>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\err.c</FilePath>
             </File>
             <File>
-              <FileName>if_api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\if_api.c</FilePath>
-            </File>
-            <File>
               <FileName>netbuf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\netbuf.c</FilePath>
@@ -1236,11 +1232,6 @@
               <FileName>sockets.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\sockets.c</FilePath>
-            </File>
-            <File>
-              <FileName>tcpip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\tcpip.c</FilePath>
             </File>
             <File>
               <FileName>autoip.c</FileName>
@@ -1336,6 +1327,11 @@
               <FileName>lowpan6.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\netif\lowpan6.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcpip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\tcpip.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1477,6 +1473,11 @@
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\wifi\WICED\network\LwIP\WWD\wwd_network.c</FilePath>
             </File>
+            <File>
+              <FileName>wiced_lib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\wifi\WICED\internal\wiced_lib.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1516,6 +1517,11 @@
               <FileName>low_level_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD\ARM_CM3\low_level_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>platform_mcu_powersave.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals\platform_mcu_powersave.c</FilePath>
             </File>
           </Files>
         </Group>

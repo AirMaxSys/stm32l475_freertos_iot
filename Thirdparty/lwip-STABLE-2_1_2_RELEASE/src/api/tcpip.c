@@ -582,13 +582,14 @@ tcpip_callbackmsg_trycallback(struct tcpip_callback_msg *msg)
  *
  * @see tcpip_callbackmsg_new()
  */
+#if 0
 err_t
 tcpip_callbackmsg_trycallback_fromisr(struct tcpip_callback_msg *msg)
 {
   LWIP_ASSERT("Invalid mbox", sys_mbox_valid_val(tcpip_mbox));
   return sys_mbox_trypost_fromisr(&tcpip_mbox, msg);
 }
-
+#endif
 /**
  * @ingroup lwip_os
  * Initialize this module:

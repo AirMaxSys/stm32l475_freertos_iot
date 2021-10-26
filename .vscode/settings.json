@@ -15,6 +15,10 @@
         "wwd_network_interface.h": "c",
         "wwd_events.h": "c",
         "wwd_bus_protocol.h": "c",
-        "wifi_nvram_image.h": "c"
+        "wifi_nvram_image.h": "c",
+        "platform_cache_def.h": "c",
+        "wwd_network_constants.h": "c",
+        "sys_arch.h": "c",
+        "platform_resource.h": "c"
     }
 }

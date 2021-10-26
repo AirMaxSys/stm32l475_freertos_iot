@@ -287,6 +287,13 @@ static wwd_result_t wwd_nan_config (wiced_bool_t enable);
 /******************************************************
  *             Function definitions
  ******************************************************/
+ // ARMCLANG have no funtion named strnlen define in string.h
+static size_t strnlen(const char *s, size_t max_len)
+{
+    size_t i = 0;
+    for(; (i < max_len) && s[i]; ++i);
+    return i;
+}
 
 wiced_bool_t wwd_wifi_p2p_is_go_up( void )
 {
@@ -2561,7 +2568,7 @@ static void wwd_wifi_fw_cmd_exit_hook( sdpcm_command_type_t type, uint32_t comma
     else
     {
         /* Assume it's a set ioctl */
-        WPRINT_APP_INFO(( "Ioctl %lu; interface %d\n", command, interface ));
+        WPRINT_APP_INFO(( "Ioctl %u; interface %d\n", command, interface ));
         executing_hook = WICED_TRUE;
 
         /* subtract one to change to get ioctl */
@@ -4241,6 +4248,7 @@ wwd_result_t wwd_wifi_get_ht_mode( wwd_interface_t interface, wiced_ht_mode_t* h
     return WWD_SUCCESS;
 }
 
+#if 0
 wwd_result_t wwd_wifi_enable_sup_set_passphrase( const uint8_t* security_key_psk, uint8_t psk_length, wiced_security_t auth_type )
 {
     wiced_interface_t interface;
@@ -4258,7 +4266,7 @@ wwd_result_t wwd_wifi_enable_sup_set_passphrase( const uint8_t* security_key_psk
     }
 
     /* Map the interface to a BSS index */
-    bss_index = wwd_get_bss_index( interface );
+    bss_index = wwd_get_bss_index( (wwd_interface_t)interface );
 
     /* Set supplicant variable - mfg app doesn't support these iovars, so don't care if return fails */
     data = wwd_sdpcm_get_iovar_buffer( &buffer, (uint16_t) 8, "bsscfg:" IOVAR_STR_SUP_WPA );
@@ -4273,6 +4281,7 @@ wwd_result_t wwd_wifi_enable_sup_set_passphrase( const uint8_t* security_key_psk
 
     return WWD_SUCCESS;
 }
+#endif
 
 wwd_result_t wwd_wifi_set_passphrase( const uint8_t* security_key, uint8_t key_length, wwd_interface_t interface )
 {

@@ -37,7 +37,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "platform_cmsis.h"
-#include "core_cmFunc.h"
+//#include "core_cmFunc.h"
 #include "platform_init.h"
 #include "platform_constants.h"
 #include "platform_assert.h"

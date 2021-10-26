@@ -273,6 +273,10 @@ static struct lwip_sock sockets[NUM_SOCKETS];
 /** This counter is increased from lwip_select when the list is changed
     and checked in select_check_waiters to see if it has changed. */
 static volatile int select_cb_ctr;
+
+// provide errno varaible
+int errno;
+
 #endif /* LWIP_TCPIP_CORE_LOCKING */
 /** The global list of tasks waiting for select */
 static struct lwip_select_cb *select_cb_list;
