@@ -322,7 +322,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>4</wLevel>
+            <wLevel>3</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
@@ -1504,11 +1504,6 @@
               <FilePath>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals\platform_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>platform_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals\platform_qspi.c</FilePath>
-            </File>
-            <File>
               <FileName>platform_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals\platform_uart.c</FilePath>
@@ -1522,6 +1517,16 @@
               <FileName>platform_mcu_powersave.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals\platform_mcu_powersave.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\wifi\WICED\LIB\stm32_hal_peripherals\gpio\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>platform_resource.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\wifi\WICED\platform\MCU\platform_resource.c</FilePath>
             </File>
           </Files>
         </Group>

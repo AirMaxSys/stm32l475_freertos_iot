@@ -19,7 +19,7 @@
  *                    Constants
  ******************************************************/
 
-#define COUNTRY                       WICED_COUNTRY_AUSTRALIA
+#define COUNTRY                       WICED_COUNTRY_CHINA
 #define CIRCULAR_RESULT_BUFF_SIZE     (40)
 #define APP_THREAD_STACKSIZE          (4096)
 

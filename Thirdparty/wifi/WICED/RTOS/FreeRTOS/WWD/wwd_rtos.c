@@ -47,7 +47,8 @@
 #include "wwd_assert.h"
 #include "RTOS/wwd_rtos_interface.h"
 #include "platform/wwd_platform_interface.h"    /* host_platform_is_in_interrupt_context */
-#include "StackMacros.h"
+//#include "StackMacros.h"
+#include "stack_macros.h"
 #include "wiced_utilities.h"
 
 /******************************************************

@@ -37,7 +37,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "wicedfs.h"
+#include <stdlib.h>
+//#include "wicedfs.h"
 #include "wiced_resource.h"
 #include "platform_config.h"
 #include "platform_resource.h"
