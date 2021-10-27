@@ -99,8 +99,18 @@ static void sdio_prepare_data_transfer( wwd_bus_transfer_direction_t direction, 
  ******************************************************/
 
 #ifndef WICED_DISABLE_MCU_POWERSAVE
+static void sdio_oob_irq_handler( void* arg )
+{
+    UNUSED_PARAMETER(arg);
+    WWD_BUS_STATS_INCREMENT_VARIABLE( oob_intrs );
+    platform_mcu_powersave_exit_notify( );
+    wwd_thread_notify_irq( );
+}
+
 wwd_result_t host_enable_oob_interrupt( void )
 {
+    platform_gpio_init( &wifi_sdio_pins[WWD_PIN_SDIO_OOB_IRQ], INPUT_HIGH_IMPEDANCE );
+    platform_gpio_irq_enable( &wifi_sdio_pins[WWD_PIN_SDIO_OOB_IRQ], IRQ_TRIGGER_RISING_EDGE, sdio_oob_irq_handler, 0 );
     return WWD_SUCCESS;
 }
 
@@ -609,7 +619,7 @@ void SDIO_IRQHandler(void)
     sdio_irq();
 }
 
-void DMA2_Stream4_IRQHandler(void)
+void DMA2_Channel4_IRQHandler(void)
 {
     sdio_dma_irq();
 }

@@ -98,13 +98,13 @@ extern "C" {
 // #define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_1
 
 /*  Wi-Fi GPIO0 pin is used for out-of-band interrupt */
-#define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 1 )
+#define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 0 )
 
 /*  Wi-Fi power pin is present */
-#define WICED_USE_WIFI_POWER_PIN
+// #define WICED_USE_WIFI_POWER_PIN
 
 /*  Wi-Fi reset pin is present */
-//#define WICED_USE_WIFI_RESET_PIN
+#define WICED_USE_WIFI_RESET_PIN
 
 /*  WLAN Powersave Clock Source
  *  The WLAN sleep clock can be driven from one of two sources:

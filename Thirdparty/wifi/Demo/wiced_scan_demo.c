@@ -64,6 +64,7 @@ const platform_gpio_t wifi_control_pins[] = {
     [WWD_PIN_RESET] = {GPIOD, 1},
 };
 
+// PD2     ------> SDMMC1_CMD
 // PANDORA board SDIO GPIO port
 const platform_gpio_t wifi_sdio_pins[] = {
     [WWD_PIN_SDIO_OOB_IRQ] = { GPIOC,  5 },

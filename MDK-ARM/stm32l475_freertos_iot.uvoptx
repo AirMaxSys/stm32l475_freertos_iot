@@ -125,7 +125,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTARM</Key>
-          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=759,231,1135,467,0)(1009=1010,354,1268,942,0)(1012=135,169,612,484,0)</Name>
+          <Name>(1010=445,518,895,1075,0)(1007=-1,-1,-1,-1,0)(1008=759,231,1135,467,0)(1009=1010,354,1268,942,0)(1012=135,169,612,484,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -148,12 +148,50 @@
           <Name>-U0668FF515255706587212418 -O10446 -SF10000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P1 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO131090 -TC10000000 -TT10000000 -TP21 -TDS8004 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO11 -FD20000000 -FC1000 -FN1 -FF0STM32L4xx_512.FLM -FS08000000 -FL080000 -FP0($$Device:STM32L475VETx$CMSIS\Flash\STM32L4xx_512.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>406</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134268908</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\WWD\wwd_SDIO.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/platform/MCU/STM32L4xx/WWD/wwd_SDIO.c\406</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>619</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134242454</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\WWD\wwd_SDIO.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/platform/MCU/STM32L4xx/WWD/wwd_SDIO.c\619</Expression>
+        </Bp>
+      </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>TH_msgQ_buf</ItemText>
+          <ItemText>sdio_transfer_finished_semaphore</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>SDMMC1</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
@@ -638,7 +676,7 @@
 
   <Group>
     <GroupName>Application/User/Core</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2478,7 +2516,7 @@
 
   <Group>
     <GroupName>WIFI/WICED</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
