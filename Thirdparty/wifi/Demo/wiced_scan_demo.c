@@ -52,8 +52,13 @@ static wiced_scan_result_t     result_buff[CIRCULAR_RESULT_BUFF_SIZE];
 static uint16_t                result_buff_write_pos = 0;
 static uint16_t                result_buff_read_pos  = 0;
 
-/* Specific platform porting */
+/******************************************************
+* Specific platform porting
+* NOTE: must have this
+*******************************************************/
+#include "FreeRTOSConfig.h"
 #include "platform_mcu_peripheral.h"
+#include "platform_init.h"
 #include "wwd_platform_common.h"
 
 #include "stm32l475xx.h"
@@ -79,9 +84,13 @@ const platform_gpio_t wifi_sdio_pins[] = {
 // In this port just need to set SDIO and DMA IRQ priority
 void platform_init_peripheral_irq_priorities(void)
 {
-    HAL_NVIC_SetPriority(SDMMC1_IRQn, 2, 0);
-    HAL_NVIC_SetPriority(DMA2_Channel4_IRQn, 3, 0);
+    // IRQ priority can not beyond configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY
+    // because we will call FreeRTOS ISR API form IRQ handler
+    HAL_NVIC_SetPriority(SDMMC1_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY, 0);
+    HAL_NVIC_SetPriority(DMA2_Channel4_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1, 0);
 }
+
+
 
 /******************************************************
  *               Function Definitions
@@ -222,6 +231,9 @@ static void app_main( void )   /*@globals killed num_scan_results_semaphore, und
 int wiced_scan_main( void )
 {
     signed portBASE_TYPE create_result;
+    
+    // NOTE: must add
+    platform_init_mcu_infrastructure();
 
     /* Create an initial thread */
     create_result = xTaskCreate(startup_thread, "app_thread", (unsigned short) (APP_THREAD_STACKSIZE / sizeof( portSTACK_TYPE )), NULL, DEFAULT_THREAD_PRIO, &startup_thread_handle);

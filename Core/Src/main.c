@@ -184,15 +184,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C3_Init();
-  MX_QUADSPI_Init();
-  MX_SAI1_Init();
-  MX_SDMMC1_SD_Init();
-  MX_SPI1_Init();
-  MX_SPI2_Init();
+//   MX_I2C3_Init();
+//   MX_QUADSPI_Init();
+//   MX_SAI1_Init();
+//   MX_SDMMC1_SD_Init();
+//   MX_SPI1_Init();
+//   MX_SPI2_Init();
   MX_SPI3_Init();
   MX_USART1_UART_Init();
-  MX_USB_OTG_FS_PCD_Init();
+//   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
   wiced_scan_main();

@@ -49,7 +49,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>stm32l475_pandora_rtx\</OutputDirectory>
+          <OutputDirectory>.\stm32l475_freertos_iot\</OutputDirectory>
           <OutputName>stm32l475_freertos_iot</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>

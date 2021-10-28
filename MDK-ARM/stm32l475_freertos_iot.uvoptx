@@ -125,7 +125,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTARM</Key>
-          <Name>(1010=445,518,895,1075,0)(1007=-1,-1,-1,-1,0)(1008=759,231,1135,467,0)(1009=1010,354,1268,942,0)(1012=135,169,612,484,0)</Name>
+          <Name>(1010=1117,221,1567,778,0)(1007=-1,-1,-1,-1,0)(1008=759,231,1135,467,0)(1009=1010,354,1268,942,0)(1012=135,169,612,484,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -152,9 +152,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
+          <LineNumber>204</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134300164</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\platform_init.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/platform/MCU/STM32L4xx/platform_init.c\204</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
           <LineNumber>406</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134268908</Address>
+          <Address>134254948</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -166,11 +182,11 @@
           <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/platform/MCU/STM32L4xx/WWD/wwd_SDIO.c\406</Expression>
         </Bp>
         <Bp>
-          <Number>1</Number>
+          <Number>2</Number>
           <Type>0</Type>
           <LineNumber>619</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134242454</Address>
+          <Address>134233558</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -198,7 +214,7 @@
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>0x10002580</ItemText>
+          <ItemText>0x20007ae0</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>
@@ -2860,7 +2876,7 @@
 
   <Group>
     <GroupName>WIFI/WICED/Platform</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2976,7 +2992,7 @@
 
   <Group>
     <GroupName>WIFI/Demo</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
