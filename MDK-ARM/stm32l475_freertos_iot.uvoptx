@@ -152,22 +152,6 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>204</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134300164</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\platform_init.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/platform/MCU/STM32L4xx/platform_init.c\204</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
           <LineNumber>406</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>134254948</Address>
@@ -182,7 +166,7 @@
           <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/platform/MCU/STM32L4xx/WWD/wwd_SDIO.c\406</Expression>
         </Bp>
         <Bp>
-          <Number>2</Number>
+          <Number>1</Number>
           <Type>0</Type>
           <LineNumber>619</LineNumber>
           <EnabledFlag>1</EnabledFlag>
@@ -2988,6 +2972,18 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>221</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Thirdparty\wifi\port\pandora_platform.c</PathWithFileName>
+      <FilenameWithoutPath>pandora_platform.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
   </Group>
 
   <Group>
@@ -2998,7 +2994,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>221</FileNumber>
+      <FileNumber>222</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>

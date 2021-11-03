@@ -1528,6 +1528,11 @@
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\wifi\WICED\platform\MCU\platform_resource.c</FilePath>
             </File>
+            <File>
+              <FileName>pandora_platform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\wifi\port\pandora_platform.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
