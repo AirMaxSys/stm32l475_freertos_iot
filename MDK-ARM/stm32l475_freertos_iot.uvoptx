@@ -152,34 +152,82 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>406</LineNumber>
+          <LineNumber>1064</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134254948</Address>
+          <Address>134316718</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\WWD\wwd_SDIO.c</Filename>
+          <Filename>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\api_lib.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/platform/MCU/STM32L4xx/WWD/wwd_SDIO.c\406</Expression>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/lwip-STABLE-2_1_2_RELEASE/src/api/api_lib.c\1064</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>619</LineNumber>
+          <LineNumber>1077</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134233558</Address>
+          <Address>134316796</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\WWD\wwd_SDIO.c</Filename>
+          <Filename>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\api_lib.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/platform/MCU/STM32L4xx/WWD/wwd_SDIO.c\619</Expression>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/lwip-STABLE-2_1_2_RELEASE/src/api/api_lib.c\1077</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>148</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134377622</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\tcpip.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/lwip-STABLE-2_1_2_RELEASE/src/api/tcpip.c\148</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>161</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134377666</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\tcpip.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/lwip-STABLE-2_1_2_RELEASE/src/api/tcpip.c\161</Expression>
+        </Bp>
+        <Bp>
+          <Number>4</Number>
+          <Type>0</Type>
+          <LineNumber>1713</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134288842</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\api_msg.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/lwip-STABLE-2_1_2_RELEASE/src/api/api_msg.c\1713</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -191,7 +239,7 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SDMMC1</ItemText>
+          <ItemText>tcpip_mbox</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
@@ -656,7 +704,7 @@
 
   <Group>
     <GroupName>Application/MDK-ARM</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1932,7 +1980,7 @@
 
   <Group>
     <GroupName>Thirdparty/lwip</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2516,7 +2564,7 @@
 
   <Group>
     <GroupName>WIFI/WICED</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2860,7 +2908,7 @@
 
   <Group>
     <GroupName>WIFI/WICED/Platform</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -3001,6 +3049,18 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\Thirdparty\wifi\Demo\wiced_scan_demo.c</PathWithFileName>
       <FilenameWithoutPath>wiced_scan_demo.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>223</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Thirdparty\wifi\Demo\tcp_socket_server.c</PathWithFileName>
+      <FilenameWithoutPath>tcp_socket_server.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

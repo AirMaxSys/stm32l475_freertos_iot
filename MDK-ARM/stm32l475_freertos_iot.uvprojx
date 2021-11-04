@@ -1543,6 +1543,11 @@
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\wifi\Demo\wiced_scan_demo.c</FilePath>
             </File>
+            <File>
+              <FileName>tcp_socket_server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\wifi\Demo\tcp_socket_server.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

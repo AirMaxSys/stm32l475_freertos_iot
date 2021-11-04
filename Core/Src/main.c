@@ -52,7 +52,8 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-  extern int wiced_scan_main();
+  extern int wiced_scan_main(void);
+  extern int tcp_socket_server_main(void);
 
 /* USER CODE END PTD */
 
@@ -161,6 +162,7 @@ void gui_task(void *argv)
   * @retval int
   */
 int main(void)
+
 {
   /* USER CODE BEGIN 1 */
 
@@ -195,7 +197,8 @@ int main(void)
 //   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
-  wiced_scan_main();
+//   wiced_scan_main();
+    tcp_socket_server_main();
 
 #if USING_FREERTOS == 0
     TH_msgQ = xQueueCreate(1, sizeof(TH_msgQ_buf));

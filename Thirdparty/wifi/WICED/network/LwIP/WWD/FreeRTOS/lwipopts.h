@@ -455,20 +455,21 @@ extern "C" {
  * By default enable debug printing for debug build, but set level to off
  * This allows user to change any desired debug level to on.
  */
+#define WICED_LWIP_DEBUG
 
 #ifdef WICED_LWIP_DEBUG
 #define LWIP_DEBUG
 #define MEMP_OVERFLOW_CHECK            ( 2 )
 #define MEMP_SANITY_CHECK              ( 1 )
 
-#define MEM_DEBUG                      (LWIP_DBG_OFF)
-#define MEMP_DEBUG                     (LWIP_DBG_OFF)
+#define MEM_DEBUG                      (LWIP_DBG_ON)
+#define MEMP_DEBUG                     (LWIP_DBG_ON)
 #define PBUF_DEBUG                     (LWIP_DBG_OFF)
 #define API_LIB_DEBUG                  (LWIP_DBG_OFF)
 #define API_MSG_DEBUG                  (LWIP_DBG_OFF)
-#define TCPIP_DEBUG                    (LWIP_DBG_OFF)
-#define NETIF_DEBUG                    (LWIP_DBG_OFF)
-#define SOCKETS_DEBUG                  (LWIP_DBG_OFF)
+#define TCPIP_DEBUG                    (LWIP_DBG_ON)
+#define NETIF_DEBUG                    (LWIP_DBG_ON)
+#define SOCKETS_DEBUG                  (LWIP_DBG_ON)
 #define IP_DEBUG                       (LWIP_DBG_OFF)
 #define IP_REASS_DEBUG                 (LWIP_DBG_OFF)
 #define RAW_DEBUG                      (LWIP_DBG_OFF)
@@ -476,7 +477,7 @@ extern "C" {
 #define UDP_DEBUG                      (LWIP_DBG_OFF)
 #define TCP_DEBUG                      (LWIP_DBG_OFF)
 #define TCP_INPUT_DEBUG                (LWIP_DBG_OFF)
-#define TCP_OUTPUT_DEBUG               (LWIP_DBG_OFF)
+#define TCP_OUTPUT_DEBUG               (LWIP_DBG_ON)
 #define TCP_RTO_DEBUG                  (LWIP_DBG_OFF)
 #define TCP_CWND_DEBUG                 (LWIP_DBG_OFF)
 #define TCP_WND_DEBUG                  (LWIP_DBG_OFF)
@@ -496,7 +497,7 @@ extern "C" {
 #define SNMP_MIB_DEBUG                 (LWIP_DBG_OFF)
 #define DNS_DEBUG                      (LWIP_DBG_OFF)
 
-#define LWIP_DBG_TYPES_ON              (LWIP_DBG_OFF)   /* (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT) */
+#define LWIP_DBG_TYPES_ON              (LWIP_DBG_ON)   /* (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT) */
 #endif
 
 
