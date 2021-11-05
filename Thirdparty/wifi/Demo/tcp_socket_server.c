@@ -27,6 +27,7 @@
 #include "lwip/tcpip.h"
 #include "lwip/dhcp.h"
 #include "lwip/prot/dhcp.h"
+#include "lwip/err.h"
 #include "sys.h"
 
 /* Macros*/
@@ -49,8 +50,6 @@
 #define AP_SSID                     "NMSL_saodeyi"
 #define AP_PASSWD                   "11111111"
 
-
-
 /* Static functions declarations */
 static void tcpip_init_done(void *argv);
 static void startup_thread(void *argv);
@@ -64,6 +63,9 @@ static const wiced_ssid_t ap_ssid = {
 static xTaskHandle startup_thread_handle;
 static struct netif dev_if;
 ip4_addr_t hostip, netmask, gateway;
+
+/* Extern variable declarations*/
+extern int errno;
 
 /* Function definitios*/
 static int config_wifi_lwip(void)
@@ -135,8 +137,10 @@ static void tcp_socket_task(void *argv)
 
         while (1) {
             if (write(sockfd, (const uint8_t *)wbuf, sizeof(wbuf)) < 0) {
-                WPRINT_APP_INFO(("Socket write failed!\n"));
+                WPRINT_APP_INFO(("Socket write err! ERRNO=%d\n", errno));
                 break;
+            } else {
+                WPRINT_APP_INFO(("Socket write successful!\n"));
             }
             vTaskDelay(1000);
         }
@@ -164,7 +168,9 @@ int tcp_socket_server_main(void)
     platform_init_mcu_infrastructure();
 
     /* Create an initial thread */
-    create_result = xTaskCreate(startup_thread, "app_thread", (unsigned short) (APP_THREAD_STACKSIZE / sizeof( portSTACK_TYPE )), NULL, DEFAULT_THREAD_PRIO, &startup_thread_handle);
+    create_result = xTaskCreate(startup_thread, "app_thread",   \
+        (unsigned short)(APP_THREAD_STACKSIZE / sizeof( portSTACK_TYPE )),  \
+        NULL, DEFAULT_THREAD_PRIO, &startup_thread_handle);
 
     wiced_assert("Failed to create main thread", create_result == pdPASS );
     REFERENCE_DEBUG_ONLY_VARIABLE( create_result );
@@ -195,7 +201,7 @@ static void startup_thread(void *argv)
         return;
     }
 
-        /* Initialise LwIP, providing the callback function and callback semaphore */
+    /* Initialise LwIP, providing the callback function and callback semaphore */
     tcpip_init( tcpip_init_done, (void*) &lwip_done_sema );
     xSemaphoreTake( lwip_done_sema, portMAX_DELAY );
     vQueueDelete( lwip_done_sema );
