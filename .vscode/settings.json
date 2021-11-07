@@ -19,6 +19,8 @@
         "platform_cache_def.h": "c",
         "wwd_network_constants.h": "c",
         "sys_arch.h": "c",
-        "platform_resource.h": "c"
+        "platform_resource.h": "c",
+        "mqttfreertos.h": "c",
+        "sockets.h": "c"
     }
 }
