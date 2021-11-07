@@ -46,7 +46,7 @@
 #define SERV_ADDR_BYTE3             (101)
 #define SERV_PORT_NUM               (8000)
 #define TCP_SOCKET_TASK_PRIORITY    (4)
-#define TCP_SOCKET_TASK_STACK_SIZE  (2048)
+#define TCP_SOCKET_TASK_STACK_SIZE  (2048*4)
 #define AP_SSID                     "NMSL_saodeyi"
 #define AP_PASSWD                   "11111111"
 
@@ -64,8 +64,10 @@ static xTaskHandle startup_thread_handle;
 static struct netif dev_if;
 ip4_addr_t hostip, netmask, gateway;
 
-/* Extern variable declarations*/
+/* Extern variable and funtion declarations*/
 extern int errno;
+// test mqtt
+extern void prvMQTTEchoTask(void *pvParameters);
 
 /* Function definitios*/
 static int config_wifi_lwip(void)
@@ -152,11 +154,15 @@ static void app_main(void)
 {
     if (config_wifi_lwip() < 0)
         return;
-    
+#if 0 
     // Call lwip layer thread create funtion to initialize a new clinet thread
     sys_thread_new("tcp_socket", tcp_socket_task, NULL, \
             TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
 
+#endif
+    // test mqtt
+    sys_thread_new("mqtt_test", prvMQTTEchoTask, NULL, \
+            TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
     while (1) ;
 }
 

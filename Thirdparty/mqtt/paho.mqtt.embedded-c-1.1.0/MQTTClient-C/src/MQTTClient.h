@@ -36,6 +36,7 @@
 
 #include "MQTTPacket.h"
 #include "stdio.h"
+#include "string.h"
 
 #if defined(MQTTCLIENT_PLATFORM_HEADER)
 /* The following sequence of macros converts the MQTTCLIENT_PLATFORM_HEADER value
@@ -68,6 +69,8 @@ typedef struct Network
 
 /* The Timer structure must be defined in the platform specific header,
  * and have the following functions to operate on it.  */
+#include "MQTTFreeRTOS.h"
+
 extern void TimerInit(Timer*);
 extern char TimerIsExpired(Timer*);
 extern void TimerCountdownMS(Timer*, unsigned int);
@@ -217,10 +220,7 @@ DLLExport int MQTTYield(MQTTClient* client, int time);
  *  @param client - the client object to use
  *  @return truth value indicating whether the client is connected to the server
  */
-DLLExport int MQTTIsConnected(MQTTClient* client)
-{
-  return client->isconnected;
-}
+DLLExport int MQTTIsConnected(MQTTClient* client);
 
 #if defined(MQTT_TASK)
 /** MQTT start background thread for a client.  After this, MQTTYield should not be called.

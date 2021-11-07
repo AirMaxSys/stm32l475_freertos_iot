@@ -21,6 +21,9 @@
         "sys_arch.h": "c",
         "platform_resource.h": "c",
         "mqttfreertos.h": "c",
-        "sockets.h": "c"
+        "sockets.h": "c",
+        "mqttclient.h": "c",
+        "task.h": "c",
+        "xutility": "c"
     }
 }

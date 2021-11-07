@@ -368,6 +368,7 @@ void MQTTRun(void* parm)
 		MutexLock(&c->mutex);
 #endif
 		TimerCountdownMS(&timer, 500); /* Don't wait too long if no traffic is incoming */
+        printf("MQTT thread run\r\n");
 		cycle(c, &timer);
 #if defined(MQTT_TASK)
 		MutexUnlock(&c->mutex);
@@ -689,4 +690,9 @@ int MQTTDisconnect(MQTTClient* c)
 	  MutexUnlock(&c->mutex);
 #endif
     return rc;
+}
+
+int MQTTIsConnected(MQTTClient* client)
+{
+  return client->isconnected;
 }

@@ -17,13 +17,19 @@
  *    Add LWIP - AirMaxSys
  *******************************************************************************/
 
+#include <string.h>
+
 #include "MQTTFreeRTOS.h"
 
-/* LWIP header*/
+/* LWIP includes*/
 #include "lwip/opt.h"
 #include "lwip/sockets.h"
+#include "lwip/netdb.h"
 #include "lwip/err.h"
 
+/* Debug includes*/
+#include "wwd_debug.h"
+#include "wwd_assert.h"
 
 int ThreadStart(Thread* thread, void (*fn)(void*), void* arg)
 {
@@ -129,7 +135,7 @@ int FreeRTOS_write(Network* n, unsigned char* buffer, int len, int timeout_ms)
 		int rc = 0;
 
 		lwip_setsockopt(n->my_socket, 0, SO_SNDTIMEO, &xTicksToWait, sizeof(xTicksToWait));
-		rc = lwip_write(n->my_socket, buffer + sentLen, len - sentLen, 0);
+		rc = lwip_write(n->my_socket, buffer + sentLen, len - sentLen);
 		if (rc > 0)
 			sentLen += rc;
 		else if (rc < 0)
@@ -167,18 +173,14 @@ int NetworkConnect(Network* n, char* addr, int port)
     // Note:
     //  - gethostbyname can only compatible IPv4
     //  - only return one address of host cause lwip limitation
-	if (!(hptr = lwip_gethostbyname())) {
+	if (!(hptr = lwip_gethostbyname(addr))) {
         WPRINT_APP_INFO(("Get host name failed!\n"));
 		goto exit;
     }
 
     address.sin_family= AF_INET;
 	address.sin_port = lwip_htons(port);
-    // address convertion string -> binary
-    if (!lwip_inet_pton(address.sin_family, hptr->h_addr_list[0], &address.sin_addr)) {
-        WPRINT_APP_INFO(("Address convertion failed!\n"));
-        goto exit;
-    }
+    memcpy(&address.sin_addr, (char *)hptr->h_addr_list[0], sizeof(struct in_addr));
 
 	if ((n->my_socket = lwip_socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         WPRINT_APP_ERROR(("Create socket failed!\n"));
@@ -187,7 +189,7 @@ int NetworkConnect(Network* n, char* addr, int port)
 
 	if ((retVal = lwip_connect(n->my_socket, (struct sockaddr *)&address, sizeof(struct sockaddr))) < 0) {
         WPRINT_APP_ERROR(("Socket connect failed!\n"));
-        closesocket(sockfd);
+        closesocket(n->my_socket);
 	    goto exit;
 	}
     WPRINT_APP_INFO(("Connect to server successful!\n"));
