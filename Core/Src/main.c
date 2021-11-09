@@ -69,8 +69,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static QueueHandle_t TH_msgQ;
-static uint16_t TH_msgQ_buf[2];
+QueueHandle_t th_sensor_msg;
+uint16_t th_sensor_msg_buf[2];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -110,10 +110,11 @@ void temp_humi_smaple_task(void *argv)
 
         // Put data to message queue
         if (aht10.temp != 0 && aht10.humi != 0) {
-            TH_msgQ_buf[0] = aht10.temp;
-            TH_msgQ_buf[1] = aht10.humi;
+            th_sensor_msg_buf[0] = aht10.temp;
+            th_sensor_msg_buf[1] = aht10.humi;
 #if USING_FREERTOS == 1
-            xQueueSend(TH_msgQ, TH_msgQ_buf, 0);
+        if (th_sensor_msg != 0)
+            xQueueSend(th_sensor_msg, th_sensor_msg_buf, 0);
 #endif
         }
 	}
@@ -147,11 +148,10 @@ void gui_task(void *argv)
     for (;;)
     {
 #if USING_FREERTOS == 1
-        if (xQueueReceive(TH_msgQ, TH_msgQ_buf, pdMS_TO_TICKS(5)) == pdTRUE)
+        if (th_sensor_msg != 0)
+            if (xQueueReceive(th_sensor_msg, th_sensor_msg_buf, pdMS_TO_TICKS(5)) == pdTRUE)
 #endif
-        {
-            gui_temp_humi_val_update(lb_temp, lb_humi, TH_msgQ_buf);
-        }
+                gui_temp_humi_val_update(lb_temp, lb_humi, th_sensor_msg_buf);
         lv_task_handler();
     }
 }
@@ -197,12 +197,15 @@ int main(void)
 //   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
+    th_sensor_msg = xQueueCreate(5, sizeof(th_sensor_msg_buf));
+    if (th_sensor_msg == 0) {
+        printf("MSG queue of TH seonsor created failed!\n");
+    }
+
 //   wiced_scan_main();
     tcp_socket_server_main();
 
 #if USING_FREERTOS == 0
-    TH_msgQ = xQueueCreate(1, sizeof(TH_msgQ_buf));
-
     xTaskCreate(led_blink_task, "LED", configMINIMAL_STACK_SIZE, NULL, 0, NULL);
     xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
     xTaskCreate(gui_task, "GUI", 1024, NULL, 3, NULL);

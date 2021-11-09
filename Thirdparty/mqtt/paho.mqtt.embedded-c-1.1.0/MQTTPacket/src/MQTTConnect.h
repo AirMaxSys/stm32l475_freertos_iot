@@ -26,7 +26,7 @@
   #define DLLExport
 #endif
 
-#define MQTT_TASK 1
+#define MQTT_TASK
 
 
 typedef union

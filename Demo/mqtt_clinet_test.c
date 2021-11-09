@@ -38,9 +38,12 @@ void prvMQTTEchoTask(void *pvParameters)
     if ((rc = NetworkConnect(&network, address, 1883)) != 0)
         printf("Return code from network connect is %d\n", rc);
 
-#if !defined(MQTT_TASK)
+    // FIXME: create MQTT task will mess up RTOS scheduler(seem to mutex deadlock)
+#if 0
+#if defined(MQTT_TASK)
     if ((rc = MQTTStartTask(&client)) != pdPASS)
         printf("Return code from start tasks is %d\n", rc);
+#endif
 #endif
 
     connectData.MQTTVersion = 3;

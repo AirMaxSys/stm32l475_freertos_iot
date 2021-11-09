@@ -1,7 +1,7 @@
 #include "aht10.h"
 #include "proj_config.h"
 
-#define AHT10_DBG	1
+#define AHT10_DBG	0
 
 #define AHT10_I2C_ADDR		0x38u
 /* AHT10 commands*/

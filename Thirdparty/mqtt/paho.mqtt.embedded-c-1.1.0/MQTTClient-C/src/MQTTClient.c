@@ -373,6 +373,8 @@ void MQTTRun(void* parm)
 #if defined(MQTT_TASK)
 		MutexUnlock(&c->mutex);
 #endif
+        // TODO:try to fix mqtt task dead lock
+        portYIELD();
 	}
 }
 

@@ -684,11 +684,6 @@
           <GroupName>Demos</GroupName>
           <Files>
             <File>
-              <FileName>mqtt_pub_test.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Demo\mqtt_pub_test.c</FilePath>
-            </File>
-            <File>
               <FileName>tcp_socket_server.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Demo\tcp_socket_server.c</FilePath>
@@ -697,6 +692,16 @@
               <FileName>wiced_scan_demo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Demo\wiced_scan_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>mqtt_clinet_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Demo\mqtt_clinet_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>mqtt_pub_th_sensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Demo\mqtt_pub_th_sensor.c</FilePath>
             </File>
           </Files>
         </Group>
