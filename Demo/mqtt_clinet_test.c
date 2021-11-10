@@ -32,7 +32,7 @@ void prvMQTTEchoTask(void *pvParameters)
 
     pvParameters = 0;
     NetworkInit(&network);
-    MQTTClientInit(&client, &network, 30000, sendbuf, sizeof(sendbuf), readbuf, sizeof(readbuf));
+    MQTTClientInit(&client, &network, 1000, sendbuf, sizeof(sendbuf), readbuf, sizeof(readbuf));
 
     char *address = BROKER_HOSTNAME; 
     if ((rc = NetworkConnect(&network, address, 1883)) != 0)

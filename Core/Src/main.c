@@ -197,7 +197,7 @@ int main(void)
 //   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
-    th_sensor_msg = xQueueCreate(5, sizeof(th_sensor_msg_buf));
+    th_sensor_msg = xQueueCreate(1, sizeof(th_sensor_msg_buf));
     if (th_sensor_msg == 0) {
         printf("MSG queue of TH seonsor created failed!\n");
     }

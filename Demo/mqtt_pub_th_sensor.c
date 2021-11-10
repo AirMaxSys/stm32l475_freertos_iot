@@ -93,6 +93,7 @@ void mqttTHSensorTask(void *argv)
 
                 printf("MQTT publish successful\r\n");
             }
+            portYIELD();
         }
     }
     
