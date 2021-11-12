@@ -113,8 +113,8 @@ void temp_humi_smaple_task(void *argv)
             th_sensor_msg_buf[0] = aht10.temp;
             th_sensor_msg_buf[1] = aht10.humi;
 #if USING_FREERTOS == 1
-        if (th_sensor_msg != 0)
-            xQueueSend(th_sensor_msg, th_sensor_msg_buf, 0);
+            if (th_sensor_msg != 0)
+                xQueueSend(th_sensor_msg, th_sensor_msg_buf, 0);
 #endif
         }
 	}
@@ -196,7 +196,24 @@ int main(void)
   MX_USART1_UART_Init();
 //   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
-
+#if 0
+    #include "stdlib.h"
+    
+    static uint16_t counter = 0;
+    uint16_t var;
+    while (1) {
+        var++;
+        th_sensor_msg_buf[0] = 0xc00;
+        char *ptr = (char *)malloc(1024);
+        if (ptr != NULL) {
+            counter ++;
+            printf("Malloc total size: %dKb\n", counter);
+            ptr = NULL;
+        } else {
+            while(1);
+        }
+    }
+#endif
     th_sensor_msg = xQueueCreate(1, sizeof(th_sensor_msg_buf));
     if (th_sensor_msg == 0) {
         printf("MSG queue of TH seonsor created failed!\n");
@@ -361,6 +378,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     lv_tick_inc(1);
   }
   /* USER CODE END Callback 1 */
+}
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+    printf("Detect stack overflow in task[%s]\n", pcTaskName);
+}
+
+void vApplicationIdleHook(void)
+{
+    static TimeOut_t timeout;
+    static TickType_t fix_period = pdMS_TO_TICKS(1000);
+    // capture current time
+    vTaskSetTimeOutState(&timeout);
+    if (xTaskCheckForTimeOut(&timeout, &fix_period) == pdTRUE) {
+        printf("Remain %.1fKb!\n", xPortGetFreeHeapSize()/1024.0);
+        fix_period = pdMS_TO_TICKS(1000);
+    }
 }
 
 /**

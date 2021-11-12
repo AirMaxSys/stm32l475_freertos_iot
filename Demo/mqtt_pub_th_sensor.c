@@ -63,12 +63,12 @@ void mqttTHSensorTask(void *argv)
         printf("Return code from MQTT connect is %d\n", rc);
     else
         printf("MQTT Connected\n");
-
+#if 0
     // Debug message pub
     if ((rc = MQTTSubscribe(&client, TH_SENSOR_TOPIC, 2, thSensorMsgArrived)) != 0)
         printf("Return code from MQTT subscribe is %d\n", rc);
     printf("MQTT sub successful\r\n");
-
+#endif
     while (1)
     {
         if (th_sensor_msg != 0) {
@@ -90,8 +90,6 @@ void mqttTHSensorTask(void *argv)
                 if ((rc = MQTTPublish(&client, TH_SENSOR_TOPIC, &message)) != 0) {
                     printf("Return code from MQTT publish is %d\n", rc);
                 }
-
-                printf("MQTT publish successful\r\n");
             }
             portYIELD();
         }

@@ -264,6 +264,7 @@ void st7789_fill_color(uint16_t color)
     for (uint8_t i = 0; i < 20; ++i) {
         if (HAL_SPI_Transmit_DMA(&st7789_spi_handler, buf, ST7789_FILL_COLOR_SIZE) != HAL_OK)
             __NOP();
+        // FIXME: using DMA irq don't polling
         // Polling untill transmission done
         st7789_wait_dma_tc();
         // Clear flags and reset state

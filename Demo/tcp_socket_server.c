@@ -70,6 +70,7 @@ extern int errno;
 extern void prvMQTTEchoTask(void *pvParameters);
 extern void mqttTHSensorTask(void *argv);
 // test othre task
+extern void gui_task(void *argv);
 extern void lcd_display_task(void *argv);
 extern void led_blink_task(void *argv);
 extern void temp_humi_smaple_task(void *argv);
@@ -168,14 +169,14 @@ static void app_main(void)
     // test mqtt
     // sys_thread_new("mqtt_test", prvMQTTEchoTask, NULL,
     //                TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
-    sys_thread_new("led_blink_task", led_blink_task, NULL,
-                   256 * 4, 1);
-    // sys_thread_new("LCD_task", lcd_display_task, NULL,
-    //                1500 * 4, 2);
-    sys_thread_new("sensor_task", temp_humi_smaple_task, NULL,
-                   1024 * 4, 5);
     sys_thread_new("mqtt_th_sensor_task", mqttTHSensorTask, NULL,
                    TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
+    sys_thread_new("led_blink_task", led_blink_task, NULL,
+                   512 * 4, 4);
+    sys_thread_new("lcd_blink", lcd_display_task, NULL,
+                   2048 * 4, 4);
+    sys_thread_new("sensor_task", temp_humi_smaple_task, NULL,
+                   1024 * 4, 4);
 }
 
 int tcp_socket_server_main(void)

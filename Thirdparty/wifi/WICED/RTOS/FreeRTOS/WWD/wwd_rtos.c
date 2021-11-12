@@ -60,7 +60,7 @@
 
 const uint32_t  ms_to_tick_ratio = (uint32_t)( 1000 / configTICK_RATE_HZ );
 
-extern void vApplicationStackOverflowHook( TaskHandle_t *pxTask, signed portCHAR *pcTaskName );
+//extern void vApplicationStackOverflowHook( TaskHandle_t *pxTask, signed portCHAR *pcTaskName );
 
 /******************************************************
  *             Function definitions
@@ -362,13 +362,15 @@ wwd_result_t host_rtos_deinit_mutex( host_mutex_type_t* mutex )
     return WWD_UNSUPPORTED;
 }
 
+#if 0
 void vApplicationStackOverflowHook( TaskHandle_t *pxTask, signed portCHAR *pcTaskName )
 {
-    UNUSED_PARAMETER( pxTask );
+    UNUSED_PARAMETER( xTask );
     UNUSED_PARAMETER( pcTaskName ); /* unused parameter in release build */
 
     wiced_assert("Stack Overflow Detected", 0 != 0);
 }
+#endif
 
 void vApplicationMallocFailedHook( void )
 {
