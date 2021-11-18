@@ -51,9 +51,6 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, MOTOR_B_Pin|MOTOR_A_Pin|AUDIO_PWR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -72,7 +69,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, NRF_CS_Pin|AHT10_IIC_CLK_Pin|LCD_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : PCPin PCPin */
-  GPIO_InitStruct.Pin = SD_CS_Pin|WIFI_INT_Pin;
+  GPIO_InitStruct.Pin = WIFI_INT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

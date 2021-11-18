@@ -24,6 +24,10 @@
         "sockets.h": "c",
         "mqttclient.h": "c",
         "task.h": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "st7789v2.h": "c",
+        "proj_config.h": "c",
+        "cmsis_os2.h": "c",
+        "sdmmc.h": "c"
     }
 }
