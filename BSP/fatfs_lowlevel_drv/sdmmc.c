@@ -6,8 +6,10 @@
 */
 
 #include "sdmmc.h"
+#include "stm32l475xx.h"
 #include "stm32l4xx_hal.h"
 
+/* sdmmc structs decleration*/
 struct __packed sdmmc_cmd_frame {
     uint8_t idx;
     union {
@@ -33,6 +35,11 @@ SPI_HandleTypeDef hspi_sdmmc;
 DMA_HandleTypeDef hdma_sdmmc_tx;
 DMA_HandleTypeDef hdma_sdmmc_rx;
 
+/* sdmmc functions definition*/
+
+/**
+ * Initailize SPI bus CS PIN
+ */
 static void sdmmc_cs_pin_init(void)
 {
     // Enable CS PORT clock
@@ -50,18 +57,24 @@ static void sdmmc_cs_pin_init(void)
     HAL_GPIO_Init()
 }
 
+/**
+ * Pulldown SPI bus CS pin to ready to start communication 
+ */
 void sdmmc_cs_select(void)
 {
     HAL_GPIO_WritePin(SDMMC_CS_PORT, SDMMC_CS_PIN, GPIO_PIN_RESET);
 }
 
+/**
+ * Pullup SPI bus CS pin to stop communication
+ */
 void sdmmc_cs_unselect(void)
 {
     HAL_GPIO_WritePin(SDMMC_CS_PORT, SDMMC_CS_PIN, GPIO_PIN_SET);
 }
 
 /**
- * 
+ * Initialize and config SPI bus
  */
 void sdmmc_spi_init(void)
 {
@@ -82,7 +95,7 @@ void sdmmc_spi_init(void)
     HAL_GPIO_Init(GPIOA, &hgpios);
 
     // MicroSD connect to MCU with SPI1
-    // MicorSD can work with SPI mode0 or mode 3
+    // SDC/MMC can work with SPI mode0 or mode 3
     hspi_sdmmc.Instance                 = SPI1;
     hspi_sdmmc.Init.CLKPolarity         = SPI_POLARITY_LOW;
     hspi_sdmmc.Init.CLKPhase            = SPI_PHASE_1EDGE;
@@ -99,11 +112,63 @@ void sdmmc_spi_init(void)
         // TODO: LOG error
         __NOP();
     }
+
+    // Enable SPI interrupt
+    HAL_NVIC_SetPriority(SPI1_IRQn, 3, 0);
+    HAL_NVIC_EnableIRQ(SPI1_IRQn);
 }
 
+/**
+ * Initialize and config DMA with sdmmc in both TX
+ *  and RX directions.
+ */
 void sdmmc_dma_init(void)
 {
+    // Enable DMA clock
+    __HAL_RCC_DMA1_CLK_ENABLE();
 
+    // config DMA TX(MCU refrence manual table44)
+    hdma_sdmmc_tx.Instance                  = DMA1_Channel3;
+    hdma_sdmmc_tx.Init.Request              = DMA_REQUEST_1;
+    hdma_sdmmc_tx.Init.Direction            = DMA_MEMORY_TO_PERIPH;
+    // SPIx_DR register is 16-bites width
+    hdma_sdmmc_tx.Init.PeriphDataAlignment  = DMA_PDATAALIGN_HALFWORD;
+    hdma_sdmmc_tx.Init.PeriphInc            = DMA_PINC_DISABLE;
+    hdma_sdmmc_tx.Init.MemDataAlignment     = DMA_MDATAALIGN_HALFWORD;
+    hdma_sdmmc_tx.Init.MemInc               = DMA_MINC_ENABLE;
+    hdma_sdmmc_tx.Init.Mode                 = DMA_NORMAL;
+    hdma_sdmmc_tx.Init.Priority             = DMA_PRIORITY_MEDIUM;
+
+    // config DMA RX
+    hdma_sdmmc_rx.Instance                  = DMA1_Channel2;
+    hdma_sdmmc_rx.Init.Request              = DMA_REQUEST_1;
+    hdma_sdmmc_rx.Init.Direction            = DMA_PERIPH_TO_MEMORY;
+    hdma_sdmmc_rx.Init.PeriphDataAlignment  = DMA_PDATAALIGN_HALFWORD;
+    hdma_sdmmc_rx.Init.PeriphInc            = DMA_PINC_DISABLE;
+    hdma_sdmmc_rx.Init.MemDataAlignment     = DMA_MDATAALIGN_HALFWORD;
+    hdma_sdmmc_rx.Init.MemInc               = DMA_MINC_ENABLE;
+    hdma_sdmmc_rx.Init.Mode                 = DMA_NORMAL;
+    hdma_sdmmc_rx.Init.Priority             = DMA_PRIORITY_MEDIUM;
+
+    // Initializition
+    if (HAL_DMA_Init(&hdma_sdmmc_tx) != HAL_OK) {
+        // TODO: LOG error
+        __NOP();
+    }
+    if (HAL_DMA_Init(&hdma_sdmmc_rx) != HAL_OK) {
+        // TODO: LOG error
+        __NOP();
+    }
+
+    // Link SPI TX with DMA
+    __HAL_LINKDMA(&hspi_sdmmc, hdmatx, hdma_sdmmc_tx);
+    __HAL_LINKDMA(&hspi_sdmmc, hdmarx, hdma_sdmmc_rx);
+
+    // Enable DMA interrupt
+    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 3, 1);
+    HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 3, 1);
+    HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+    HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 }
 
 /**
@@ -139,15 +204,15 @@ uint8_t sdmmc_send_cmd(uint8_t cmd, DWORD arg)
 
     // CMD index: format 0b01+cmd
     cmd_fm.idx = 0x40 | cmd;
-    // CMD argument: 32bits MSB (can only apply to liile-edain CPU)
+    // CMD argument: 32bits MSB (can only apply to little-edian CPU)
     cmd_fm.arg.bytes[0] = (uint8_t)(arg >> 24);
     cmd_fm.arg.bytes[1] = (uint8_t)(arg >> 16);
     cmd_fm.arg.bytes[2] = (uint8_t)(arg >> 8);
     cmd_fm.arg.bytes[3] = (uint8_t)(arg >> 0);
     // CMD CRC:
-    // CRC_CMD0(arg=0)=0x95
-    // CRC_CMD8(arg=0x1AA)=0x87
-    // CRC_dummy = 0x01
+    //  CRC_CMD0(arg=0)=0x95
+    //  CRC_CMD8(arg=0x1AA)=0x87
+    //  CRC_dummy = 0x01
     cmd_fm.crc = (cmd == CMD0) ? 0x95 : (cmd == CMD8) ? 0x87 : 0x01;
 
     HAL_SPI_Transmit_IT(&hspi_sdmmc, uc_ptr, sizeof(sdmmc_cmd_frame_t));
