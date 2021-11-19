@@ -1,13 +1,45 @@
-/*
-* Lowlevel driver for microSD
-*   Init SPI bus
-*   Init SPI CS PIN
-*   Init DMA
-*/
+/**
+  * Lowlevel driver for microSD
+  *   Init SPI bus
+  *   Init SPI CS PIN
+  *   Init DMA
+  */
 
 #include "sdmmc.h"
 #include "stm32l475xx.h"
 #include "stm32l4xx_hal.h"
+
+/* sdmmc GPIOs of SPI bus definition */
+#define SDMMC_CS_PORT   GPIOC
+#define SDMMC_CS_PIN    GPIO_PIN_3
+#define SDMMC_CLK_PORT  GPIOA
+#define SDMMC_CLK_PIN   GPIO_PIN_5
+#define SDMMC_DI_PORT   GPIOA
+#define SDMMC_DI_PIN    GPIO_PIN_6
+#define SDMMC_DO_PORT   GPIOA
+#define SDMMC_DO_PIN    GPIO_PIN_7
+
+/* SDC/MMC commands definitaion*/
+#define CMD0        (0)         /* GO_IDLE_STATE */
+#define CMD1        (1)         /* SEND_OP_COND (MMC) */
+#define ACMD41      (0x80 + 41) /* SEND_OP_COND (SDC) */
+#define CMD8        (8)         /* SEND_IF_COND */
+#define CMD9        (9)         /* SEND_CSD */
+#define CMD10       (10)        /* SEND_CID */
+#define CMD12       (12)        /* STOP_TRANSMISSION */
+#define ACMD13      (0x80 + 13) /* SD_STATUS (SDC) */
+#define CMD16       (16)        /* SET_BLOCKLEN */
+#define CMD17       (17)        /* READ_SINGLE_BLOCK */
+#define CMD18       (18)        /* READ_MULTIPLE_BLOCK */
+#define CMD23       (23)        /* SET_BLOCK_COUNT (MMC) */
+#define ACMD23      (0x80 + 23) /* SET_WR_BLK_ERASE_COUNT (SDC) */
+#define CMD24       (24)        /* WRITE_BLOCK */
+#define CMD25       (25)        /* WRITE_MULTIPLE_BLOCK */
+#define CMD32       (32)        /* ERASE_ER_BLK_START */
+#define CMD33       (33)        /* ERASE_ER_BLK_END */
+#define CMD38       (38)        /* ERASE */
+#define CMD55       (55)        /* APP_CMD */
+#define CMD58       (58)        /* READ_OCR */
 
 /* sdmmc structs decleration*/
 struct __packed sdmmc_cmd_frame {
@@ -19,16 +51,6 @@ struct __packed sdmmc_cmd_frame {
     uint8_t crc; 
 };
 typedef struct sdmmc_cmd_framm sdmmc_cmd_frame_t;
-
-/* sdmmc GPIOs of SPI bus definition */
-#define SDMMC_CS_PORT   GPIOC
-#define SDMMC_CS_PIN    GPIO_PIN_3
-#define SDMMC_CLK_PORT  GPIOA
-#define SDMMC_CLK_PIN   GPIO_PIN_5
-#define SDMMC_DI_PORT   GPIOA
-#define SDMMC_DI_PIN    GPIO_PIN_6
-#define SDMMC_DO_PORT   GPIOA
-#define SDMMC_DO_PIN    GPIO_PIN_7
 
 /* sdmmc SPI bus and DMA declaration */
 SPI_HandleTypeDef hspi_sdmmc;
@@ -48,7 +70,7 @@ static void sdmmc_cs_pin_init(void)
     // Pullup CS PIN(unselect)
     HAL_GPIO_WritePin(SDMMC_CS_PORT, SDMMC_CS_PIN, GPIO_PIN_SET);
 
-    // Initializition CS PIN
+    // Initialization CS PIN
     GPIO_InitTypeDef cs = {0};
     cs.Pin      = SDMMC_CS_PIN;
     cs.Mode     = GPIO_MODE_OUTPUT_PP;
@@ -78,14 +100,14 @@ void sdmmc_cs_unselect(void)
  */
 void sdmmc_spi_init(void)
 {
-    // Initializition SPI CS PIN
+    // Initialization SPI CS PIN
     sdmmc_cs_pin_init();
 
     // Enanle clock
     __HAL_RCC_SPI1_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
 
-    // Initializition GPIOs of SPI bus
+    // Initialization GPIOs of SPI bus
     GPIO_InitTypeDef hgpios = {0};
     hgpios.Pin          = SDMMC_CLK_PIN | SDMMC_DI_PIN | SDMMC_DO_PIN;
     hgpios.Mode         = GPIO_MODE_AF_PP;
@@ -150,7 +172,7 @@ void sdmmc_dma_init(void)
     hdma_sdmmc_rx.Init.Mode                 = DMA_NORMAL;
     hdma_sdmmc_rx.Init.Priority             = DMA_PRIORITY_MEDIUM;
 
-    // Initializition
+    // Initialization
     if (HAL_DMA_Init(&hdma_sdmmc_tx) != HAL_OK) {
         // TODO: LOG error
         __NOP();
@@ -193,6 +215,7 @@ uint8_t sdmmc_send_cmd(uint8_t cmd, DWORD arg)
         cmd_fm.crc = 0x1
 
         HAL_SPI_Transmit_IT(&hspi_sdmmc, uc_ptr, sizeof(sdmmc_cmd_frame_t));
+        // NCR(command response time)
         for (uint8_t i = 0; (rxbuf & 0x80) && (i < 10); ++i)
             HAL_SPI_TransmitReceive_IT(&hspi_sdmmc, &dummy_txbuf, &rxbuf, 1);
         if (rxbuf != 0) {
@@ -216,7 +239,67 @@ uint8_t sdmmc_send_cmd(uint8_t cmd, DWORD arg)
     cmd_fm.crc = (cmd == CMD0) ? 0x95 : (cmd == CMD8) ? 0x87 : 0x01;
 
     HAL_SPI_Transmit_IT(&hspi_sdmmc, uc_ptr, sizeof(sdmmc_cmd_frame_t));
+    // CMD12 response R1b take time longer than NCR
+    if (cmd == CMD12) {
+        HAL_SPI_Transmit_IT(&hspi_sdmmc, &dummy_txbuf, 1);
+    }
+    // NCR(command response time)
     for (uint8_t i = 0; (rxbuf & 0x80) && (i < 10); ++i)
         HAL_SPI_TransmitReceive_IT(&hspi_sdmmc, &dummy_txbuf, &rxbuf, 1);
     return rxbuf;
+}
+
+/*FatFs diskio layer MMC API defination*/
+
+/**
+ * @brief
+ * @return
+ */
+int MMC_disk_initialize(void)
+{
+
+}
+
+/**
+ * @brief
+ * @return
+ */
+int MMC_disk_status(void)
+{
+
+}
+
+/**
+ * @brief
+ * @param buff
+ * @param sector
+ * @param count
+ * @return
+ */
+int MMC_disk_read(uint8_t *buff, uint32_t sector, uint32_t count)
+{
+
+}
+
+/**
+ * @brief
+ * @param buff
+ * @param sector
+ * @param count
+ * @return
+ */
+int MMC_disk_write(const uint8_t *buff, uint32_t sector, uint32_t count)
+{
+
+}
+
+/**
+ * @brief
+ * @param cmd
+ * @param buff
+ * @return
+ */
+int MMC_disk_ioctl(uint8_t cmd, void *buff)
+{
+
 }
