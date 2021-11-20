@@ -5,10 +5,6 @@
 extern "C" {
 #endif
 
-void sdmmc_spi_init(void);
-void sdmmc_cs_select(void);
-void sdmmc_cs_unselect(void);
-
 /*FatFs diskio layer MMC API interfaces*/
 int MMC_disk_initialize(void);
 int MMC_disk_status(void);

@@ -30,6 +30,7 @@
         "cmsis_os2.h": "c",
         "sdmmc.h": "c",
         "ff.h": "c",
-        "diskio.h": "c"
+        "diskio.h": "c",
+        "freertos.h": "c"
     }
 }

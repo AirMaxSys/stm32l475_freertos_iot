@@ -6,8 +6,11 @@
   */
 
 #include "sdmmc.h"
+#include "diskio.h"
 #include "stm32l475xx.h"
 #include "stm32l4xx_hal.h"
+
+#include "task.h"
 
 /* sdmmc GPIOs of SPI bus definition */
 #define SDMMC_CS_PORT   GPIOC
@@ -46,7 +49,7 @@ struct __packed sdmmc_cmd_frame {
     uint8_t idx;
     union {
         uint8_t bytes[4];
-        DWORD word;
+        uint32_t word;
     } arg;
     uint8_t crc; 
 };
@@ -57,7 +60,10 @@ SPI_HandleTypeDef hspi_sdmmc;
 DMA_HandleTypeDef hdma_sdmmc_tx;
 DMA_HandleTypeDef hdma_sdmmc_rx;
 
-/* sdmmc functions definition*/
+/* sdmmc local veraibles*/
+volatile static fatfs_sdmmc_state = STA_NOINIT;
+
+/* sdmmc lowlevel functions definition*/
 
 /**
  * Initailize SPI bus CS PIN
@@ -82,7 +88,7 @@ static void sdmmc_cs_pin_init(void)
 /**
  * Pulldown SPI bus CS pin to ready to start communication 
  */
-void sdmmc_cs_select(void)
+static inline void sdmmc_select(void)
 {
     HAL_GPIO_WritePin(SDMMC_CS_PORT, SDMMC_CS_PIN, GPIO_PIN_RESET);
 }
@@ -90,7 +96,7 @@ void sdmmc_cs_select(void)
 /**
  * Pullup SPI bus CS pin to stop communication
  */
-void sdmmc_cs_unselect(void)
+static inline void sdmmc_unselect(void)
 {
     HAL_GPIO_WritePin(SDMMC_CS_PORT, SDMMC_CS_PIN, GPIO_PIN_SET);
 }
@@ -98,7 +104,7 @@ void sdmmc_cs_unselect(void)
 /**
  * Initialize and config SPI bus
  */
-void sdmmc_spi_init(void)
+static void sdmmc_spi_init(void)
 {
     // Initialization SPI CS PIN
     sdmmc_cs_pin_init();
@@ -144,7 +150,7 @@ void sdmmc_spi_init(void)
  * Initialize and config DMA with sdmmc in both TX
  *  and RX directions.
  */
-void sdmmc_dma_init(void)
+static void sdmmc_dma_init(void)
 {
     // Enable DMA clock
     __HAL_RCC_DMA1_CLK_ENABLE();
@@ -198,12 +204,12 @@ void sdmmc_dma_init(void)
  * 
  *  @param cmd SD command definitions
  *  @param arg argument in SD command frame
- *  @return SDMM R0 response value
+ *  @return SDMM R1 response value
  */
-uint8_t sdmmc_send_cmd(uint8_t cmd, DWORD arg)
+static uint8_t sdmmc_send_cmd(uint8_t cmd, uint32_t arg)
 {
     sdmmc_cmd_frame_t cmd_fm;
-    uint8_t *uc_ptr = (uint8_t *)&cmd_fm;
+    uint8_t *u8_ptr = (uint8_t *)&cmd_fm;
     uint8_t dummy_txbuf = 0xFF;
     uint8_t rxbuf = 0xFF;
 
@@ -214,7 +220,7 @@ uint8_t sdmmc_send_cmd(uint8_t cmd, DWORD arg)
         // Dummy CRC
         cmd_fm.crc = 0x1
 
-        HAL_SPI_Transmit_IT(&hspi_sdmmc, uc_ptr, sizeof(sdmmc_cmd_frame_t));
+        HAL_SPI_Transmit_IT(&hspi_sdmmc, u8_ptr, sizeof(sdmmc_cmd_frame_t));
         // NCR(command response time)
         for (uint8_t i = 0; (rxbuf & 0x80) && (i < 10); ++i)
             HAL_SPI_TransmitReceive_IT(&hspi_sdmmc, &dummy_txbuf, &rxbuf, 1);
@@ -238,7 +244,7 @@ uint8_t sdmmc_send_cmd(uint8_t cmd, DWORD arg)
     //  CRC_dummy = 0x01
     cmd_fm.crc = (cmd == CMD0) ? 0x95 : (cmd == CMD8) ? 0x87 : 0x01;
 
-    HAL_SPI_Transmit_IT(&hspi_sdmmc, uc_ptr, sizeof(sdmmc_cmd_frame_t));
+    HAL_SPI_Transmit_IT(&hspi_sdmmc, u8_ptr, sizeof(sdmmc_cmd_frame_t));
     // CMD12 response R1b take time longer than NCR
     if (cmd == CMD12) {
         HAL_SPI_Transmit_IT(&hspi_sdmmc, &dummy_txbuf, 1);
@@ -252,12 +258,48 @@ uint8_t sdmmc_send_cmd(uint8_t cmd, DWORD arg)
 /*FatFs diskio layer MMC API defination*/
 
 /**
- * @brief
- * @return
+ * @brief Lowlevel disk IO initialization, check if MMC card exist.
+ * @return Disk IO driver state
  */
 int MMC_disk_initialize(void)
 {
+    TimeOut_t init_timeout;
+    TickType_t tickstowait = pdMS_TO_TICKS(1000);
+    uint8_t res = 0;
+    uint8_t dummy_tbuf[10] = {0xFF};
 
+    // Initilize MCU related peripheral
+    sdmmc_spi_init();
+    sdmmc_dma_init();
+
+    // SDC/MMC power on sequence
+    //  dummy clock (CS=DI=high)
+    HAL_SPI_Transmit_IT(&hspi_sdmmc, &dummy_tbuf; 10);
+
+    sdmmc_select();
+    // Software reset
+    if (sdmmc_send_cmd(CMD0, 0) == 0x01) {
+        vTaskSetTimeOutState(&init_timeout);
+        // Initiate initialization process
+        while (((res = sdmmc_send_cmd(CMD1, 0)) == 0x01) &&  \
+            (xTaskCheckForTimeOut(&init_timeout, &tickstowait) == pdFALSE))
+            ;
+        // Check detect SD card type is MMC
+        if ((res == 0) && (xTaskCheckForTimeOut(&init_timeout, &Tickstowait) != pdTRUE)) {
+            // Set block size to 512bytes to work with FATFS
+            sdmmc_send_cmd(CMD16, 0x200);
+            fatfs_sdmmc_state &= (~STA_NOINIT);
+        } else {
+            // TODO: LOG error
+            __NOP();
+        }
+    } else {
+        //TODO: LOG error
+        __NOP();
+    }
+    sdmmc_unselect();
+
+    return fatfs_sdmmc_state;
 }
 
 /**
