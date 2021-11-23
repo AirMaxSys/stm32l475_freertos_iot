@@ -17,6 +17,11 @@
 #include "semphr.h"
 #endif
 
+#define MMC_DBG_ON
+#ifdef MMC_DBG_ON
+#include <stdio.h>
+#endif
+
 /* sdmmc GPIOs of SPI bus definition */
 #define SDMMC_CS_PORT   GPIOC
 #define SDMMC_CS_PIN    GPIO_PIN_3
@@ -60,7 +65,7 @@ struct sdmmc_cmd_frame {
         uint32_t word;
     } arg;
     uint8_t crc; 
-}__packed;
+} __packed;
 typedef struct sdmmc_cmd_frame sdmmc_cmd_frame_t;
 
 /* sdmmc SPI bus and DMA declaration */
@@ -147,7 +152,7 @@ static void sdmmc_spi_init(void)
     }
 
     // Enable SPI interrupt
-    HAL_NVIC_SetPriority(SPI1_IRQn, 3, 0);
+    HAL_NVIC_SetPriority(SPI1_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(SPI1_IRQn);
 
     // Register callback funtions
@@ -214,8 +219,8 @@ static void sdmmc_dma_init(void)
     __HAL_LINKDMA(&hspi_sdmmc, hdmarx, hdma_sdmmc_rx);
 
     // Enable DMA interrupt
-    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 3, 1);
-    HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 3, 1);
+    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 6, 1);
+    HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 6, 1);
     HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
     HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 }
@@ -279,7 +284,7 @@ static uint8_t sdmmc_send_cmd(uint8_t cmd, uint32_t arg)
     //  CRC_CMD8(arg=0x1AA)=0x87
     //  CRC_dummy = 0x01
     cmd_fm.crc = (cmd == CMD0) ? 0x95 : (cmd == CMD8) ? 0x87 : 0x01;
-
+    
     HAL_SPI_Transmit(&hspi_sdmmc, u8_ptr, sizeof(sdmmc_cmd_frame_t), 0xFF);
     // CMD12 response R1b take time longer than NCR
     if (cmd == CMD12)
@@ -341,7 +346,8 @@ static int sdmmc_read(uint8_t *rbuf, uint32_t count)
     const uint16_t chunk = 65535;
     uint8_t token = 0;
     uint8_t dummy_rx[2] = {0};
-    uint8_t dummy_tx[2] = {0xFF};
+    uint8_t dummy_tx[2] = {0xFF, 0xFF};
+    // Fixme: add without using RTOS situation
     TimeOut_t timeout;
     TickType_t wait_tick = pdMS_TO_TICKS(200);
 
@@ -349,7 +355,7 @@ static int sdmmc_read(uint8_t *rbuf, uint32_t count)
     vTaskSetTimeOutState(&timeout);
     do {
         HAL_SPI_TransmitReceive(&hspi_sdmmc, &dummy_tx[0], &token, 1, 0xFF);
-    } while ((token == 0xFF) && (xTaskCheckForTimeOut(&timeout, &wait_tick) != pdTRUE));
+    } while ((token == 0xFF) && (xTaskCheckForTimeOut(&timeout, &wait_tick) == pdFALSE));
     if (token != 0xFE)
         return 1;
 
@@ -367,6 +373,7 @@ static int sdmmc_read(uint8_t *rbuf, uint32_t count)
             ptr += chunk;
         }
     }
+    // HAL_SPI_Receive(&hspi_sdmmc, ptr, count, 0xFF);
     HAL_SPI_Receive_DMA(&hspi_sdmmc, ptr, count);
 #if USING_FREERTOS == 1
     xSemaphoreTake(dmarx_sync_sem, portMAX_DELAY);
@@ -374,7 +381,6 @@ static int sdmmc_read(uint8_t *rbuf, uint32_t count)
     while (!dmarx_sync_var);
     dmarx_sync_var = 0
 #endif
-
     // Discard 2bytes CRC
     HAL_SPI_TransmitReceive(&hspi_sdmmc, dummy_tx, dummy_rx, 2, 0xFF);
 
@@ -389,10 +395,12 @@ static int sdmmc_read(uint8_t *rbuf, uint32_t count)
  */
 int MMC_disk_initialize(void)
 {
+    uint8_t ret = 0;
+    uint8_t dummy_tx = 0xFF;
+#if USING_FREERTOS == 1
     TimeOut_t init_timeout;
     TickType_t tickstowait = pdMS_TO_TICKS(1000);
-    uint8_t res = 0;
-    uint8_t dummy_tbuf[10] = {0xFF};
+#endif
 
     // Initilize MCU related peripheral
     sdmmc_spi_init();
@@ -400,18 +408,19 @@ int MMC_disk_initialize(void)
 
     // SDC/MMC power on sequence
     //  dummy clock (CS=DI=high)
-    HAL_SPI_Transmit(&hspi_sdmmc, dummy_tbuf, 10, 0xFF);
+    for (uint8_t i = 0; i < 10; ++i)
+        HAL_SPI_Transmit(&hspi_sdmmc, &dummy_tx, 1, 0xFF);
 
     sdmmc_select();
     // Software reset
     if (sdmmc_send_cmd(CMD0, 0) == 0x01) {
+        // Fixme: add without using RTOS situation
         vTaskSetTimeOutState(&init_timeout);
         // Initiate initialization process
-        while (((res = sdmmc_send_cmd(CMD1, 0)) == 0x01) &&  \
-            (xTaskCheckForTimeOut(&init_timeout, &tickstowait) == pdFALSE))
-            ;
+        while (((ret = sdmmc_send_cmd(CMD1, 0)) == 0x01) &&  \
+            (xTaskCheckForTimeOut(&init_timeout, &tickstowait) == pdFALSE));
         // Check detect SD card type is MMC
-        if ((res == 0) && (xTaskCheckForTimeOut(&init_timeout, &tickstowait) != pdTRUE)) {
+        if ((ret == 0) && (xTaskCheckForTimeOut(&init_timeout, &tickstowait) == pdFALSE)) {
             // Set block size to 512bytes to work with FATFS
             sdmmc_send_cmd(CMD16, 0x200);
             fatfs_sdmmc_state &= (~STA_NOINIT);
@@ -424,7 +433,7 @@ int MMC_disk_initialize(void)
         __NOP();
     }
     sdmmc_unselect();
-
+    
     return fatfs_sdmmc_state;
 }
 
@@ -446,9 +455,6 @@ int MMC_disk_status(void)
  */
 int MMC_disk_read(uint8_t *buff, uint32_t sector, uint32_t count)
 {
-    if (!buff || sector == 0 || count == 0)
-        return 1;
-
     int res = 0;
     uint8_t cmd;
     uint8_t *ptr = buff;
@@ -488,9 +494,6 @@ int MMC_disk_read(uint8_t *buff, uint32_t sector, uint32_t count)
  */
 int MMC_disk_write(const uint8_t *buff, uint32_t sector, uint32_t count)
 {
-    if (!buff || sector == 0 || count == 0)
-        return 1;
-
     int res = 0;
     uint8_t cmd, token;
     uint8_t *ptr = (uint8_t *)buff;
@@ -546,8 +549,10 @@ int MMC_disk_ioctl(uint8_t cmd, void *buff)
         if ((sdmmc_send_cmd(CMD9, 0) == 0) && (sdmmc_read(csd, 16) == 0)) {
             if ((csd[0] >> 6) != 1) {
                 n = (csd[5] & 15) + ((csd[10] & 128) >> 7) + ((csd[9] & 3) << 1) + 2;
-				csize = (csd[8] >> 6) + ((uint32_t)csd[7] << 2) + ((uint32_t)(csd[6] & 3) << 10) + 1;
+                csize = (csd[8] >> 6) + ((uint32_t)csd[7] << 2) + ((uint32_t)(csd[6] & 3) << 10) + 1;
+                *(uint32_t *)buff = csize << (n - 9);
 				*(uint32_t *)buff = csize << (n - 9); 
+                *(uint32_t *)buff = csize << (n - 9);
             }
         }
         res = RES_OK;

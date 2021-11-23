@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32L475xx,WICED_DISABLE_BOOTLOADER,_ARMCC_VERSION,NDEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Drivers/CMSIS/Include;..\Drivers\CMSIS\RTOS2\Include;..\Config;..\BSP;..\BSP\gui;..\BSP\lvgl_layer;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\include;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\portable\GCC\ARM_CM4F;..\Thirdparty\lvgl-v8.0.0;..\Thirdparty\lvgl-v8.0.0\examples;..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\include\;..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\include\lwip;..\Thirdparty\wifi\WICED\network\LwIP\WWD;..\Thirdparty\wifi\WICED\network\LwIP\WWD\FreeRTOS;..\Thirdparty\wifi\WICED\WWD\include;..\Thirdparty\wifi\WICED\platform\include;..\Thirdparty\wifi\WICED\platform\MCU;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\WAF;..\Thirdparty\wifi\WICED\platform\ARM_CM4;..\Thirdparty\wifi\WICED\RTOS;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD\ARM_CM3;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WICED;..\Thirdparty\wifi\WICED\internal;..\Thirdparty\wifi\WICED\WPL\include;..\Thirdparty\wifi\WICED\WPL\core\include;..\Thirdparty\wifi\WICED\include;..\Thirdparty\wifi\WICED\security\BESL\include;..\Thirdparty\wifi\WICED\security\BESL\crypto_internal;..\Thirdparty\wifi\WICED\security\BESL\mbedtls_open\include;..\Thirdparty\wifi\WICED\LIB\utilities\ring_buffer;..\Thirdparty\wifi\WICED\LIB\utilities\TLV;..\Thirdparty\wifi\WICED\WWD;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols\SDIO;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols\chips;..\Thirdparty\wifi\WICED\WWD\internal\chips\43362;..\Thirdparty\wifi\WICED;..\Thirdparty\wifi\WICED\LIB\utilities\crc;..\Thirdparty\wifi\WICED\LIB\utilities\linked_list;..\Thirdparty\wifi\WICED\security\BESL\host\WICED;..\Thirdparty\wifi\WICED\network\LwIP\WICED;..\Thirdparty\wifi\WICED\platform\ARM_CM4\CMSIS;..\Thirdparty\mqtt\port;..\Thirdparty\mqtt\paho.mqtt.embedded-c-1.1.0\MQTTPacket\src;..\Thirdparty\mqtt\paho.mqtt.embedded-c-1.1.0\MQTTClient-C\src;..\Thirdparty\mqtt\paho.mqtt.embedded-c-1.1.0\MQTTClient-C\src\FreeRTOS</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Drivers/CMSIS/Include;..\Drivers\CMSIS\RTOS2\Include;..\Config;..\BSP;..\BSP\gui;..\BSP\lvgl_layer;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\include;..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\portable\GCC\ARM_CM4F;..\Thirdparty\lvgl-v8.0.0;..\Thirdparty\lvgl-v8.0.0\examples;..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\include\;..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\include\lwip;..\Thirdparty\wifi\WICED\network\LwIP\WWD;..\Thirdparty\wifi\WICED\network\LwIP\WWD\FreeRTOS;..\Thirdparty\wifi\WICED\WWD\include;..\Thirdparty\wifi\WICED\platform\include;..\Thirdparty\wifi\WICED\platform\MCU;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\peripherals;..\Thirdparty\wifi\WICED\platform\MCU\STM32L4xx\WAF;..\Thirdparty\wifi\WICED\platform\ARM_CM4;..\Thirdparty\wifi\WICED\RTOS;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD\ARM_CM3;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WWD;..\Thirdparty\wifi\WICED\RTOS\FreeRTOS\WICED;..\Thirdparty\wifi\WICED\internal;..\Thirdparty\wifi\WICED\WPL\include;..\Thirdparty\wifi\WICED\WPL\core\include;..\Thirdparty\wifi\WICED\include;..\Thirdparty\wifi\WICED\security\BESL\include;..\Thirdparty\wifi\WICED\security\BESL\crypto_internal;..\Thirdparty\wifi\WICED\security\BESL\mbedtls_open\include;..\Thirdparty\wifi\WICED\LIB\utilities\ring_buffer;..\Thirdparty\wifi\WICED\LIB\utilities\TLV;..\Thirdparty\wifi\WICED\WWD;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols\SDIO;..\Thirdparty\wifi\WICED\WWD\internal\bus_protocols\chips;..\Thirdparty\wifi\WICED\WWD\internal\chips\43362;..\Thirdparty\wifi\WICED;..\Thirdparty\wifi\WICED\LIB\utilities\crc;..\Thirdparty\wifi\WICED\LIB\utilities\linked_list;..\Thirdparty\wifi\WICED\security\BESL\host\WICED;..\Thirdparty\wifi\WICED\network\LwIP\WICED;..\Thirdparty\wifi\WICED\platform\ARM_CM4\CMSIS;..\Thirdparty\mqtt\port;..\Thirdparty\mqtt\paho.mqtt.embedded-c-1.1.0\MQTTPacket\src;..\Thirdparty\mqtt\paho.mqtt.embedded-c-1.1.0\MQTTClient-C\src;..\Thirdparty\mqtt\paho.mqtt.embedded-c-1.1.0\MQTTClient-C\src\FreeRTOS;..\BSP\fatfs_lowlevel_drv;..\Thirdparty\fatfs\source</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -662,6 +662,16 @@
               <FileName>gui.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSP\gui\gui.c</FilePath>
+            </File>
+            <File>
+              <FileName>mmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\fatfs_lowlevel_drv\mmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>check_mmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\fatfs_lowlevel_drv\check_mmc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1647,6 +1657,31 @@
               <FileName>MQTTFreeRTOS.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\mqtt\port\MQTTFreeRTOS.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Fatfs</GroupName>
+          <Files>
+            <File>
+              <FileName>diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\fatfs\source\diskio.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\fatfs\source\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffsystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\fatfs\source\ffsystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffunicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\fatfs\source\ffunicode.c</FilePath>
             </File>
           </Files>
         </Group>
