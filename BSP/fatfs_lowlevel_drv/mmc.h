@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
+
 /*FatFs diskio layer MMC API interfaces*/
 int MMC_disk_initialize(void);
 int MMC_disk_status(void);

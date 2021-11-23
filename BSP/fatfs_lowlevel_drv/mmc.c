@@ -53,15 +53,15 @@
 #define FATFS_CHUNK_SIZE    512
 
 /* sdmmc structs decleration*/
-struct __packed sdmmc_cmd_frame {
+struct sdmmc_cmd_frame {
     uint8_t idx;
     union {
         uint8_t bytes[4];
         uint32_t word;
     } arg;
     uint8_t crc; 
-};
-typedef struct sdmmc_cmd_framm sdmmc_cmd_frame_t;
+}__packed;
+typedef struct sdmmc_cmd_frame sdmmc_cmd_frame_t;
 
 /* sdmmc SPI bus and DMA declaration */
 SPI_HandleTypeDef hspi_sdmmc;
@@ -69,7 +69,7 @@ DMA_HandleTypeDef hdma_sdmmc_tx;
 DMA_HandleTypeDef hdma_sdmmc_rx;
 
 /* sdmmc local variable*/
-static volatile fatfs_sdmmc_state = STA_NOINIT;
+static volatile uint8_t fatfs_sdmmc_state = STA_NOINIT;
 /* DMA sync local variable*/
 #if USING_FREERTOS == 1
 static SemaphoreHandle_t dmatx_sync_sem;
@@ -86,7 +86,7 @@ void sdmmc_spi_dmarx_complete_cb(SPI_HandleTypeDef *hspi);
 /* sdmmc lowlevel functions definition*/
 
 /**
- * Initailize SPI bus CS PIN
+ * @brief Initailize SPI bus CS PIN
  */
 static void sdmmc_cs_pin_init(void)
 {
@@ -102,12 +102,12 @@ static void sdmmc_cs_pin_init(void)
     cs.Mode     = GPIO_MODE_OUTPUT_PP;
     cs.Pull     = GPIO_PULLUP;
     cs.Speed    = GPIO_SPEED_FREQ_MEDIUM;
-    HAL_GPIO_Init()
+    HAL_GPIO_Init(SDMMC_CS_PORT, &cs);
 }
 
+
 /**
-/**
- * Initialize and config SPI bus
+ * @brief Initialize and config SPI bus
  */
 static void sdmmc_spi_init(void)
 {
@@ -138,7 +138,7 @@ static void sdmmc_spi_init(void)
     hspi_sdmmc.Init.BaudRatePrescaler   = SPI_BAUDRATEPRESCALER_2;
     hspi_sdmmc.Init.FirstBit            = SPI_FIRSTBIT_MSB;
     hspi_sdmmc.Init.NSS                 = SPI_NSS_SOFT;
-    hspi_sdmmc.Init.NSSMode             = SPI_NSS_PULSE_ENABLE;
+    hspi_sdmmc.Init.NSSPMode            = SPI_NSS_PULSE_ENABLE;
     hspi_sdmmc.Init.CRCCalculation      = SPI_CRCCALCULATION_DISABLE;
     hspi_sdmmc.Init.TIMode              = SPI_TIMODE_DISABLE;
     if (HAL_SPI_Init(&hspi_sdmmc) != HAL_OK) {
@@ -254,7 +254,7 @@ static uint8_t sdmmc_send_cmd(uint8_t cmd, uint32_t arg)
         cmd_fm.idx = 0x40 | CMD55;
         cmd_fm.arg.word = 0;
         // Dummy CRC
-        cmd_fm.crc = 0x1
+        cmd_fm.crc = 0x1;
 
         HAL_SPI_Transmit(&hspi_sdmmc, u8_ptr, sizeof(sdmmc_cmd_frame_t), 0xFF);
         // NCR(command response time)
@@ -287,6 +287,7 @@ static uint8_t sdmmc_send_cmd(uint8_t cmd, uint32_t arg)
     // NCR(command response time)
     for (uint8_t i = 0; (rxbuf & 0x80) && (i < 10); ++i) 
         HAL_SPI_TransmitReceive(&hspi_sdmmc, &dummy_txbuf, &rxbuf, 1, 0xFF);
+    
     return rxbuf;
 }
 
@@ -321,7 +322,6 @@ static int sdmmc_write(uint8_t *wbuf, uint8_t token)
         // Without response value
         if ((resp_val & 0x1F) != 0x05) {
             res = 1;
-            break;
         }
     } else {
         HAL_SPI_Transmit(&hspi_sdmmc, &token, 1, 0xFF);
@@ -349,7 +349,7 @@ static int sdmmc_read(uint8_t *rbuf, uint32_t count)
     vTaskSetTimeOutState(&timeout);
     do {
         HAL_SPI_TransmitReceive(&hspi_sdmmc, &dummy_tx[0], &token, 1, 0xFF);
-    } while ((token == 0xFF) && (vTaskCheckTimeOutState(&timeout, &ticks2wait) != pdTRUE));
+    } while ((token == 0xFF) && (xTaskCheckForTimeOut(&timeout, &wait_tick) != pdTRUE));
     if (token != 0xFE)
         return 1;
 
@@ -400,7 +400,7 @@ int MMC_disk_initialize(void)
 
     // SDC/MMC power on sequence
     //  dummy clock (CS=DI=high)
-    HAL_SPI_Transmit_IT(&hspi_sdmmc, &dummy_tbuf; 10);
+    HAL_SPI_Transmit(&hspi_sdmmc, dummy_tbuf, 10, 0xFF);
 
     sdmmc_select();
     // Software reset
@@ -411,7 +411,7 @@ int MMC_disk_initialize(void)
             (xTaskCheckForTimeOut(&init_timeout, &tickstowait) == pdFALSE))
             ;
         // Check detect SD card type is MMC
-        if ((res == 0) && (xTaskCheckForTimeOut(&init_timeout, &Tickstowait) != pdTRUE)) {
+        if ((res == 0) && (xTaskCheckForTimeOut(&init_timeout, &tickstowait) != pdTRUE)) {
             // Set block size to 512bytes to work with FATFS
             sdmmc_send_cmd(CMD16, 0x200);
             fatfs_sdmmc_state &= (~STA_NOINIT);
@@ -461,7 +461,7 @@ int MMC_disk_read(uint8_t *buff, uint32_t sector, uint32_t count)
 
     sdmmc_select();
     // Send command to SDMMC
-    if (sdmmc_send_cmd(cmd, secotr) != 0)
+    if (sdmmc_send_cmd(cmd, sector) != 0)
         res = 1;
     // Receive data
     do {
@@ -473,7 +473,7 @@ int MMC_disk_read(uint8_t *buff, uint32_t sector, uint32_t count)
     } while (--pcount);
     // Send stop command when multiple block read
     if (count > 1)
-        send_cmd(CMD12, 0);
+        sdmmc_send_cmd(CMD12, 0);
     sdmmc_unselect();
 
     return res;
@@ -493,7 +493,7 @@ int MMC_disk_write(const uint8_t *buff, uint32_t sector, uint32_t count)
 
     int res = 0;
     uint8_t cmd, token;
-    uint8_t *ptr = buff;
+    uint8_t *ptr = (uint8_t *)buff;
     
     // Fatfs block size 512bytes
     sector *= FATFS_CHUNK_SIZE;
@@ -543,8 +543,8 @@ int MMC_disk_ioctl(uint8_t cmd, void *buff)
         res = RES_OK;
         break;
     case GET_SECTOR_COUNT:
-        if ((send_cmd(CMD9, 0) == 0) && (sdmmc_read(csd, 16) == 0)) {
-            if ((rbuf[0] >> 6) != 1) {
+        if ((sdmmc_send_cmd(CMD9, 0) == 0) && (sdmmc_read(csd, 16) == 0)) {
+            if ((csd[0] >> 6) != 1) {
                 n = (csd[5] & 15) + ((csd[10] & 128) >> 7) + ((csd[9] & 3) << 1) + 2;
 				csize = (csd[8] >> 6) + ((uint32_t)csd[7] << 2) + ((uint32_t)(csd[6] & 3) << 10) + 1;
 				*(uint32_t *)buff = csize << (n - 9); 
@@ -553,7 +553,7 @@ int MMC_disk_ioctl(uint8_t cmd, void *buff)
         res = RES_OK;
         break;
     case GET_BLOCK_SIZE:
-        if ((send_cmd(CMD9, 0) == 0) && (sdmmc_read(csd, 16) == 0)) {
+        if ((sdmmc_send_cmd(CMD9, 0) == 0) && (sdmmc_read(csd, 16) == 0)) {
             *(uint32_t *)buff = ((uint32_t)((csd[10] & 124) >> 2) + 1) * (((csd[11] & 3) << 3) + ((csd[11] & 224) >> 5) + 1);
         }
         res = RES_OK;
