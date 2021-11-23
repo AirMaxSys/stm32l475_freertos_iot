@@ -60,8 +60,6 @@
 extern TIM_HandleTypeDef htim17;
 
 /* USER CODE BEGIN EV */
-extern SPI_HandleTypeDef hspi3;
-extern DMA_HandleTypeDef hdma_spi3_tx;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -174,15 +172,5 @@ void TIM1_TRG_COM_TIM17_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
-void SPI3_IRQHandler(void)
-{
-    HAL_SPI_IRQHandler(&hspi3);
-}
-
-void DMA2_Channel2_IRQHandler(void)
-{
-    HAL_DMA_IRQHandler(&hdma_spi3_tx);
-}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

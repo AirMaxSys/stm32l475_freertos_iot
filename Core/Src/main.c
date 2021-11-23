@@ -186,14 +186,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-//   MX_I2C3_Init();
-//   MX_QUADSPI_Init();
-//   MX_SAI1_Init();
-//   MX_SDMMC1_SD_Init();
-//   MX_SPI2_Init();
-  MX_SPI3_Init();
   MX_USART1_UART_Init();
-//   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 #if 0
     #include "stdlib.h"
@@ -219,15 +212,14 @@ int main(void)
     }
 
 //   wiced_scan_main();
-    tcp_socket_server_main();
+//   tcp_socket_server_main();
 
-#if USING_FREERTOS == 0
+#if USING_FREERTOS == 1
     xTaskCreate(led_blink_task, "LED", configMINIMAL_STACK_SIZE, NULL, 0, NULL);
     xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-    xTaskCreate(gui_task, "GUI", 1024, NULL, 3, NULL);
+    xTaskCreate(gui_task, "GUI", 1280, NULL, 3, NULL);
 
     vTaskStartScheduler();
-
 #endif
 
   /* USER CODE END 2 */

@@ -57,7 +57,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(WIFI_INT_GPIO_Port, WIFI_INT_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, BEEP_Pin|LCD_DC_Pin|LCD_RST_Pin|LCD_PWR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, BEEP_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, LED_red_Pin|LED_green_Pin|LED_blue_Pin, GPIO_PIN_SET);
@@ -66,7 +66,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, WIFI_REG_ON_Pin|NRF_CE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, NRF_CS_Pin|AHT10_IIC_CLK_Pin|LCD_CS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOD, NRF_CS_Pin|AHT10_IIC_CLK_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : PCPin PCPin */
   GPIO_InitStruct.Pin = WIFI_INT_Pin;
@@ -83,7 +83,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PBPin PBPin PBPin PBPin */
-  GPIO_InitStruct.Pin = BEEP_Pin|LCD_DC_Pin|LCD_RST_Pin|LCD_PWR_Pin;
+  GPIO_InitStruct.Pin = BEEP_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -95,13 +95,7 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-#if 0
-  /*Configure GPIO pins : PDPin PDPin PDPin */
-  GPIO_InitStruct.Pin = BTN_two_Pin|BTN_one_Pin|BTN_zero_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-#endif
+
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = ICM_INT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
@@ -122,7 +116,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(NRF_IRQ_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PDPin PDPin */
-  GPIO_InitStruct.Pin = NRF_CS_Pin|LCD_CS_Pin;
+  GPIO_InitStruct.Pin = NRF_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
