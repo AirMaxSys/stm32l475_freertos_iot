@@ -220,7 +220,8 @@ static void sdmmc_dma_init(void)
     HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 }
 
- * Pulldown SPI bus CS pin to ready to start communication 
+/**
+ * @brief Pulldown SPI bus CS pin to ready to start communication 
  */
 static inline void sdmmc_select(void)
 {
@@ -228,7 +229,7 @@ static inline void sdmmc_select(void)
 }
 
 /**
- * Pullup SPI bus CS pin to stop communication
+ * @brief Pullup SPI bus CS pin to stop communication
  */
 static inline void sdmmc_unselect(void)
 {
@@ -236,8 +237,7 @@ static inline void sdmmc_unselect(void)
 }
 
 /**
- *  Host send one command to sdmmc
- * 
+ *  @brief Host send one command to sdmmc
  *  @param cmd SD command definitions
  *  @param arg argument in SD command frame
  *  @return SDMM R1 response value
@@ -522,14 +522,49 @@ int MMC_disk_write(const uint8_t *buff, uint32_t sector, uint32_t count)
 }
 
 /**
- * @brief
- * @param cmd
- * @param buff
- * @return
+ * @brief SD card some basic control functions
+ * @param cmd Generic commands used by Fatfs
+ * @param buff Buffer to send or receive control data
+ * @return  RES_OK succes
+ *          RES_ERROR failure
+ *          RES_PARERR unsupported command
  */
 int MMC_disk_ioctl(uint8_t cmd, void *buff)
 {
+    int res = RES_ERROR;
+    uint8_t csd[16] = {0};
+    uint8_t n = 0;
+    uint32_t csize = 0;
 
+    switch (cmd)
+    {
+    case CTRL_SYNC:
+        sdmmc_select();
+        res = RES_OK;
+        break;
+    case GET_SECTOR_COUNT:
+        if ((send_cmd(CMD9, 0) == 0) && (sdmmc_read(csd, 16) == 0)) {
+            if ((rbuf[0] >> 6) != 1) {
+                n = (csd[5] & 15) + ((csd[10] & 128) >> 7) + ((csd[9] & 3) << 1) + 2;
+				csize = (csd[8] >> 6) + ((uint32_t)csd[7] << 2) + ((uint32_t)(csd[6] & 3) << 10) + 1;
+				*(uint32_t *)buff = csize << (n - 9); 
+            }
+        }
+        res = RES_OK;
+        break;
+    case GET_BLOCK_SIZE:
+        if ((send_cmd(CMD9, 0) == 0) && (sdmmc_read(csd, 16) == 0)) {
+            *(uint32_t *)buff = ((uint32_t)((csd[10] & 124) >> 2) + 1) * (((csd[11] & 3) << 3) + ((csd[11] & 224) >> 5) + 1);
+        }
+        res = RES_OK;
+        break;
+    
+    default:
+        res = RES_PARERR;
+        break;
+    }
+    sdmmc_unselect();
+    return res;
 }
 
 /**
