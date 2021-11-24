@@ -171,9 +171,9 @@ void test_mod_task(void *arg)
     DIR dir;
     uint32_t res;
 
-    if ((res = f_mount(&fs, "1:", 1)) == FR_OK)
+    if ((res = f_mount(&fs, "1:/", 1)) == FR_OK)
     {
-        if ((res = f_opendir(&dir, "1:")) == FR_OK)
+        if ((res = f_opendir(&dir, "1:/")) == FR_OK)
         {
             static FILINFO fno;
 
@@ -193,8 +193,7 @@ void test_mod_task(void *arg)
         printf("f_mount error! res:%d\r\n", res);
     }
     f_unmount("/");
-    while (1)
-        ;
+    
 #else
     check_mmc_main();
 #endif
