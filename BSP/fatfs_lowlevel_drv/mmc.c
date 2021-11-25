@@ -94,7 +94,7 @@ static TimeOut_t timeout;
 static TickType_t tickstowait;
 #else
 static volatile uint8_t dmatx_sync_var;
-static volatile uint8_t dmarx_sync_var;
+static volatile uint8_t dmatxrx_sync_var;
 static uint32_t start_time;
 static uint16_t timetowait;
 #endif
@@ -294,6 +294,29 @@ static inline void sd_unselect(void)
 }
 
 /**
+ * @brief Wait SD card internal processing untill MISO to high(busy flag)
+ * @return 0:success(not timeout) 1:failure(timeout)
+*/
+static uint8_t sd_wait_card_busyflag(void)
+{
+    uint8_t dummytx = 0xFF;
+    uint8_t rx = 0;
+
+    // Set wait SD card processing done timeout 500ms
+    init_timeout_state();
+    set_timetowait_val(500);
+
+    // Wait MISO goes high level
+    do {
+        HAL_SPI_TransmitReceive(&hspi_sd, &dummytx, &rx, 1, 0xFF);
+        if (rx == 0xFF)
+            break;
+    } while (check_timeout() == 0);
+
+    return (rx == 0xFF) ? 0 : 1;
+}
+
+/**
  *  @brief Host send one command to SD card
  *  @param cmd SD command definitions
  *  @param arg argument in SD command frame
@@ -353,15 +376,17 @@ static int sd_write(uint8_t *wbuf, uint8_t token)
     uint8_t dummy_tx[2] = {0xFF, 0xFF};
     uint8_t resp_val = 0;
 
+    // Send token 
+    HAL_SPI_Transmit(&hspi_sd, &token, 1, 0xFF);
     // Send data if token not stop transmission
     if (token != 0xFD) {
         HAL_SPI_Transmit_DMA(&hspi_sd, wbuf, FATFS_CHUNK_SIZE);
-    #if USING_FREERTOS == 1
+#if USING_FREERTOS == 1
         xSemaphoreTake(dmatx_sync_sem, portMAX_DELAY);
-    #else
+#else
         while (!dmatx_sync_var);
         dmatx_sync_var = 0
-    #endif
+#endif
         // Send dummy CRC
         HAL_SPI_TransmitReceive(&hspi_sd, dummy_tx, dummy_rx, 2, 0xFF);
         // Get response data
@@ -410,8 +435,8 @@ static int sd_read(uint8_t *rbuf, uint32_t count)
 #if USING_FREERTOS == 1
     xSemaphoreTake(dmatxrx_sync_sem, portMAX_DELAY);
 #else
-    while (!dmarx_sync_var);
-    dmarx_sync_var = 0
+    while (!dmatxrx_sync_var);
+    dmatxrx_sync_var = 0
 #endif
     // Discard 2bytes CRC
     HAL_SPI_TransmitReceive(&hspi_sd, dummy_tx, dummy_rx, 2, 0xFF);
@@ -492,8 +517,9 @@ int MMC_disk_initialize(void)
     }
     sd_unselect();
     
-    // Detected one of card type reset no disk mask bit
+    // Detect card type reset disk mask bit
     if (card_type) {
+        sd_card_type = card_type;
         sd_card_state &= ~STA_NOINIT;
     }
 
@@ -542,8 +568,10 @@ int MMC_disk_read(uint8_t *buff, uint32_t sector, uint32_t count)
         ptr += FATFS_CHUNK_SIZE; 
     } while (--pcount);
     // Send stop command when multiple block read
-    if (count > 1)
+    if (count > 1) {
         sd_send_cmd(CMD12, 0);
+        sd_wait_card_busyflag();
+    }
     sd_unselect();
 
     return res;
@@ -571,13 +599,15 @@ int MMC_disk_write(const uint8_t *buff, uint32_t sector, uint32_t count)
     if (count == 1) {
         if ((sd_send_cmd(CMD24, sector) == 0) && (sd_write(ptr, token) == 0))
             count = 0;
+        sd_wait_card_busyflag();
     } else {
         if (sd_card_type & CT_SDC)
             sd_send_cmd(ACMD23, count);
-        if (sd_send_cmd(CMD23, sector) == 0) {
+        if (sd_send_cmd(CMD25, sector) == 0) {
             do {
                 if (sd_write(ptr, token) != 0)
                     break;
+                sd_wait_card_busyflag();
                 ptr += FATFS_CHUNK_SIZE;
             } while (--count);
             // Stop transfer date token(0xFD)
@@ -606,10 +636,14 @@ int MMC_disk_ioctl(uint8_t cmd, void *buff)
     uint8_t n = 0;
     uint32_t csize = 0;
 
+    sd_select();
     switch (cmd) {
     case CTRL_SYNC:
-        sd_select();
-        res = RES_OK;
+        // Send dummy clock force MOSI goes high
+        HAL_SPI_Transmit(&hspi_sd, &dummy, 1, 0xFF);
+        if (sd_wait_card_busyflag() == 0) {
+            res = RES_OK;
+        }
         break;
     case GET_SECTOR_COUNT:
         if ((sd_send_cmd(CMD9, 0) == 0) && (sd_read(csd, 16) == 0)) {
@@ -680,7 +714,7 @@ void sd_spi_dmatxrx_complete_cb(SPI_HandleTypeDef *hspi)
         BaseType_t task_need_woken;
         xSemaphoreGiveFromISR(dmatxrx_sync_sem, &task_need_woken);
 #else
-        dmarx_sync_var = 1;
+        dmatxrx_sync_var = 1;
 #endif
     }
 }
