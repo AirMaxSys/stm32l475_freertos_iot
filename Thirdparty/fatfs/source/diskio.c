@@ -91,7 +91,21 @@ DRESULT disk_ioctl (
 	void *buff		/* Buffer to send/receive control data */
 )
 {
-    if (!buff)
-        return RES_PARERR;
     return MMC_disk_ioctl(cmd, buff);
+}
+
+/* Get time for Fatfs file operations*/
+DWORD get_fattime(void)
+{
+    uint16_t year = 2021;
+    uint8_t month = 11;
+    uint8_t day = 25;
+
+	/* Returns current time packed into a DWORD variable */
+	return	  ((DWORD)(year - 1980) << 25)
+			| ((DWORD)month << 21)
+			| ((DWORD)day << 16)
+			| ((DWORD)0 << 11)
+			| ((DWORD)0 << 5)
+			| ((DWORD)0 >> 1);
 }
