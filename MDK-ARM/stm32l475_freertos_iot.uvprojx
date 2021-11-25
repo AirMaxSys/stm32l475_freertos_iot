@@ -668,11 +668,6 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\fatfs_lowlevel_drv\mmc.c</FilePath>
             </File>
-            <File>
-              <FileName>check_mmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSP\fatfs_lowlevel_drv\check_mmc.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

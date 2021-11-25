@@ -163,41 +163,92 @@ void gui_task(void *argv)
     }
 }
 
-void test_mod_task(void *arg)
+void module_test_task(void *arg)
 {
-#if 1
     uint8_t i;
     FATFS fs;
     DIR dir;
+    FIL fp;
     uint32_t res;
+    uint32_t written, readcount;
+    const char *path = "1:/DOC";
+    const char *rwpath = "1:/DOC/test_fatfs.txt";
+    const char *create_file_path = "1:/DOC/create_test.txt";
+    const char wbuf[] = "The key to a successful open "
+        "technology project is to ensure a neutral playing "
+        "field for all developers, technologists, and companies "
+        "to collectively contribute to project evolution and growth. "
+        "The Linux Foundation was built on the idea of the democratization"
+        "of code and scaling adoption, for all projects equally. Expert "
+        "legal and governance support programs ensure everyone is on the "
+        "same playing field.\n";
+    char rbuf[1024];
 
-    if ((res = f_mount(&fs, "1:/", 1)) == FR_OK)
-    {
-        if ((res = f_opendir(&dir, "1:/")) == FR_OK)
-        {
+    if ((res = f_mount(&fs, "1:/", 0)) == FR_OK) {
+        if ((res = f_opendir(&dir, path)) == FR_OK) {
             static FILINFO fno;
 
             do {
                 if ((res = f_readdir(&dir, &fno)) != FR_OK) {
-                    printf("f_readdir error! res:%d\r\n", res);
+                    printf("RES:%d f_readdir error!\r\n", res);
                     break;
                 } else if (fno.fname[0] != '\0') {
                     printf("%s\r\n", fno.fname);
                 }
             } while (fno.fname[0]);
         } else {
-            printf("f_opendir error! res:%d\r\n", res);
+            printf("RES:%d f_opendir error!\r\n", res);
         }
         f_closedir(&dir);
+
+        // Write data (mode a)
+        res = f_open(&fp, rwpath, FA_WRITE | FA_OPEN_APPEND);
+        if (res != FR_OK) {
+            printf("RES:%d f_open to write error!\r\n", res);
+        } else {
+            if ((res = f_write(&fp, wbuf, sizeof(wbuf), &written)) != FR_OK)
+                printf("RES:%d f_write error!\r\n", res);
+            else
+                printf("f_write[%d] Written[%d] success!\r\n", sizeof(wbuf), written);
+
+            f_close(&fp);
+        }
+
+        // Read data
+        res = f_open(&fp, rwpath, FA_READ);
+        if (res != FR_OK) {
+            printf("RES:%d f_open to read error!\r\n", res);
+        } else {
+            if ((res = f_read(&fp, rbuf, 1024, &readcount)) != FR_OK)
+                printf("RES:%d f_read error!\r\n", res);
+            else {
+                printf("f_read[1024] Readden[%d] success!\r\n", readcount);
+                rbuf[1023] = '\0';
+                printf("%s", rbuf);
+            }
+            f_close(&fp);
+        }
+
+        // Create file
+        res = f_open(&fp, create_file_path, FA_WRITE | FA_OPEN_ALWAYS);
+        if (res != FR_OK) {
+            printf("RES:%d f_open to create file error!\r\n", res);
+        } else {
+            if ((res = f_write(&fp, wbuf, sizeof(wbuf), &written)) != FR_OK)
+                printf("RES:%d f_write error!\r\n", res);
+            else
+                printf("f_write[%d] Written[%d] success!\r\n", sizeof(wbuf), written);
+
+            f_close(&fp);
+        }
     } else {
-        printf("f_mount error! res:%d\r\n", res);
+        printf("RES:%d f_mount error!\r\n", res);
     }
-    f_unmount("/");
     
-#else
-    check_mmc_main();
-#endif
+    f_unmount("1:/");
+
     for (;;) {
+        portDelayMs(10000);
     }
 } 
 /* USER CODE END 0 */
@@ -262,7 +313,7 @@ int main(void)
     //   tcp_socket_server_main();
 
 #if USING_FREERTOS == 1
-    xTaskCreate(test_mod_task, "test module", 1024, NULL, 1, NULL);
+//    xTaskCreate(module_test_task, "test module", 4096, NULL, 1, NULL);
     xTaskCreate(led_blink_task, "LED", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 //    xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 //    xTaskCreate(gui_task, "GUI", 1280, NULL, 3, NULL);
