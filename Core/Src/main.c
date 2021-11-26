@@ -165,6 +165,8 @@ void gui_task(void *argv)
 
 void module_test_task(void *arg)
 {
+    // Test Fatfs basic functions
+#if 0
     uint8_t i;
     FATFS fs;
     DIR dir;
@@ -200,7 +202,6 @@ void module_test_task(void *arg)
             printf("RES:%d f_opendir error!\r\n", res);
         }
         f_closedir(&dir);
-
         // Write data (mode a)
         res = f_open(&fp, rwpath, FA_WRITE | FA_OPEN_APPEND);
         if (res != FR_OK) {
@@ -244,8 +245,62 @@ void module_test_task(void *arg)
     } else {
         printf("RES:%d f_mount error!\r\n", res);
     }
-    
+
     f_unmount("1:/");
+#endif   
+
+    // Test read wifi firmware bin file 43362A2.bin file size 213732bytes
+    FATFS fs;
+    FIL fp;
+    const char *root_path = "1:/";
+    const char *wifi_fw_path = "1:/wifi/43362A2.bin";
+    uint32_t res;
+    const uint16_t read_chunk = 2048;
+    uint8_t rbuf[read_chunk];
+    uint8_t count = 0;
+    uint32_t read_count;
+    uint32_t total_size = 0;
+
+    if ((res = f_mount(&fs, root_path, 0)) != FR_OK) {
+        printf("RES[%d] f_mount failure!\r\n", res);
+    } else {
+        if ((res = f_open(&fp, wifi_fw_path, FA_READ)) != FR_OK) {
+            printf("RES[%d] f_open %s failure!\r\n", res, wifi_fw_path);
+        } else {
+            puts("Start read...");
+            do {
+                if ((res = f_read(&fp, rbuf, read_chunk, &read_count)) != FR_OK) {
+                    printf("RES[%d] count[%d] f_read failure!\r\n", ++count, res);
+                    break;
+                } else {
+                    total_size += read_count;
+                } 
+            } while (read_chunk == read_count);
+            puts("End read...");
+            puts("wifi frameware total size 213732 bytes");
+            printf("Read total size %d\r\n", total_size);
+            printf("Last time read contents count[%d]:\r\n", read_count);
+            // Out put last time read 50 bytes
+            if (read_count >= 50) {
+                for (uint8_t i = 0; i < 50; ++i) {
+                    if ((i+1) % 10)
+                        printf("%02x ", rbuf[read_count-50+i]);
+                    else
+                        printf("%02x\r\n", rbuf[read_count-50+i]);
+                }
+            } else {
+                for (uint8_t i = 0; i < read_count; ++i) {
+                    if ((i+1) % 10)
+                        printf("%02x ", rbuf[i]);
+                    else
+                        printf("%02x\r\n", rbuf[i]);
+                }
+            }
+
+            f_close(&fp);
+        }
+        f_unmount(root_path);
+    }
 
     for (;;) {
         portDelayMs(10000);
@@ -313,7 +368,7 @@ int main(void)
     //   tcp_socket_server_main();
 
 #if USING_FREERTOS == 1
-//    xTaskCreate(module_test_task, "test module", 4096, NULL, 1, NULL);
+    xTaskCreate(module_test_task, "test module", 4096, NULL, 1, NULL);
     xTaskCreate(led_blink_task, "LED", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 //    xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 //    xTaskCreate(gui_task, "GUI", 1280, NULL, 3, NULL);
