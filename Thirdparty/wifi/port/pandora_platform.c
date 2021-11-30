@@ -7,6 +7,17 @@
 #include "stm32l475xx.h"
 #include "stm32l4xx_hal.h"
 
+// Wifi firmware storage path
+const char * const wifi_fw_path = "1:/wifi/43362A2.bin";
+
+// Wireless chip image stored in external
+const resource_hnd_t wifi_firmware_image = { 
+    .location = RESOURCE_IN_FILESYSTEM,
+    .size = 213732,
+    .val.fs.filename = wifi_fw_path,
+    .val.fs.offset = 0
+};
+
 // Control GPIO port - AP6181 reset?
 const platform_gpio_t wifi_control_pins[] = {
     [WWD_PIN_RESET] = {GPIOD, 1},
@@ -32,5 +43,3 @@ void platform_init_peripheral_irq_priorities(void)
     HAL_NVIC_SetPriority(SDMMC1_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY, 0);
     HAL_NVIC_SetPriority(DMA2_Channel4_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1, 0);
 }
-
-

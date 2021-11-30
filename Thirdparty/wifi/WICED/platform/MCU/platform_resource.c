@@ -39,6 +39,7 @@
 #include <string.h>
 #include <stdlib.h>
 //#include "wicedfs.h"
+#include "ff.h" // Fatfs interface
 #include "wiced_resource.h"
 #include "platform_config.h"
 #include "platform_resource.h"
@@ -121,6 +122,7 @@ resource_result_t resource_read ( const resource_hnd_t* resource, uint32_t offse
 #ifdef USES_RESOURCE_FILESYSTEM
     else
     {
+#if 0
         wicedfs_file_t file_hnd;
 
         if ( 0 != wicedfs_fopen( &resource_fs_handle, &file_hnd, resource->val.fs.filename ) )
@@ -141,6 +143,23 @@ resource_result_t resource_read ( const resource_hnd_t* resource, uint32_t offse
         }
 
         wicedfs_fclose( &file_hnd );
+#endif
+        FIL fp;
+        uint32_t read_count;
+
+        if (f_open(&fp, resource->val.fs.filename, FA_READ) != FR_OK) {
+            return RESOURCE_FILE_OPEN_FAIL;
+        }
+        if (f_lseek(&fp, (FSIZE_t)(offset + resource->val.fs.offset)) != FR_OK) {
+            f_close(&fp);
+            return RESOURCE_FILE_SEEK_FAIL;
+        }
+        if ((f_read(&fp, buffer, *size, &read_count) != FR_OK) || (read_count != *size)) {
+            f_close(&fp);
+            return RESOURCE_FILE_READ_FAIL;
+        }
+        f_close(&fp);
+        *size = read_count;
     }
 #endif /* ifdef USES_RESOURCE_FILESYSTEM */
 #endif /* USES_RESOURCE_GENERIC_FILESYSTEM */

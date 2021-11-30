@@ -116,9 +116,9 @@ extern "C" {
  */
 #define WICED_USE_WIFI_32K_CLOCK_MCO
 
-#ifndef WWD_DIRECT_RESOURCES
-//#define USES_RESOURCE_FILESYSTEM
-#endif
+// #ifndef WWD_DIRECT_RESOURCES
+#define USES_RESOURCE_FILESYSTEM
+// #endif
 
 /*  OTA */
 //#define PLATFORM_HAS_OTA

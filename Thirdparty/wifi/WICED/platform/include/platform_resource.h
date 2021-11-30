@@ -71,13 +71,14 @@ extern "C" {
 extern wiced_filesystem_t resource_fs_handle;
 #else
 
+#if 0
 #ifdef USES_RESOURCE_FILESYSTEM
 #include "wicedfs.h"
 
 extern wicedfs_filesystem_t resource_fs_handle;
 #endif /* ifdef USES_RESOURCE_FILESYSTEM */
 #endif /* ifdef USES_RESOURCE_GENERIC_FILESYSTEM */
-
+#endif
 /******************************************************
  *               Function Declarations
  ******************************************************/

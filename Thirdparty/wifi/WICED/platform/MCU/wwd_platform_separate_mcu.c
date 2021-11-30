@@ -43,6 +43,7 @@
 #include "wwd_assert.h"
 #include "platform/wwd_platform_interface.h"
 //#include "wiced_framework.h"
+#include "ff.h"
 
 /******************************************************
  *                      Macros
@@ -80,7 +81,14 @@ wwd_result_t host_platform_init( void )
 {
     host_platform_deinit_wlan_powersave_clock( );
 #ifdef USES_RESOURCE_FILESYSTEM
-    platform_filesystem_init();
+    // platform_filesystem_init();
+    static FATFS fs;
+    const char *root_path = "1:/";
+
+    if (f_mount(&fs, root_path, 1) != FR_OK) {
+        WPRINT_WWD_ERROR(("Fatfs mount failed!\r\n"));
+        return (wwd_result_t)WICED_ERROR;
+    }
 #endif
 #if defined ( WICED_USE_WIFI_RESET_PIN )
     platform_gpio_init( &wifi_control_pins[WWD_PIN_RESET], OUTPUT_PUSH_PULL );
