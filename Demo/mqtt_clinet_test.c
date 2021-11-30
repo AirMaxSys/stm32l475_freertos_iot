@@ -11,7 +11,7 @@
 
 #include "MQTTClient.h"
 
-#define BROKER_HOSTNAME     "192.168.8.101"   // 192.168.8.101
+#define BROKER_HOSTNAME     "192.168.31.225"   // 192.168.8.101
 #define TEST_TOPIC          "dev/test"
 
 void messageArrived(MessageData *data)

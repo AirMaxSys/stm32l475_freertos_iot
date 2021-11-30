@@ -12,7 +12,7 @@
 
 #include "MQTTClient.h"
 
-#define BROKER_HOSTNAME     "192.168.8.101"   // 192.168.8.101
+#define BROKER_HOSTNAME     "192.168.31.225"   // 192.168.8.101
 #define CLINET_ID           "PANDOR_TH_SENSOR_BOARD"
 #define MQTT_USERNAME       "billy"
 #define MQTT_PASSWD         "password"

@@ -313,7 +313,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>7</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -1514,11 +1514,6 @@
               <FilePath>..\Thirdparty\wifi\WICED\internal\wiced_crypto.c</FilePath>
             </File>
             <File>
-              <FileName>43362A2_bin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Thirdparty\wifi\WICED\WWD\internal\chips\43362\43362A2_bin.c</FilePath>
-            </File>
-            <File>
               <FileName>wwd_network.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\wifi\WICED\network\LwIP\WWD\wwd_network.c</FilePath>
@@ -1667,16 +1662,6 @@
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Thirdparty\fatfs\source\ff.c</FilePath>
-            </File>
-            <File>
-              <FileName>ffsystem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Thirdparty\fatfs\source\ffsystem.c</FilePath>
-            </File>
-            <File>
-              <FileName>ffunicode.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Thirdparty\fatfs\source\ffunicode.c</FilePath>
             </File>
           </Files>
         </Group>

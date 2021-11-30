@@ -200,7 +200,7 @@ int wiced_scan_main( void )
     platform_init_mcu_infrastructure();
 
     /* Create an initial thread */
-    create_result = xTaskCreate(startup_thread, "app_thread", (unsigned short) (APP_THREAD_STACKSIZE / sizeof( portSTACK_TYPE )), NULL, DEFAULT_THREAD_PRIO, &startup_thread_handle);
+    create_result = xTaskCreate(startup_thread, "app_thread", APP_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, &startup_thread_handle);
 
     wiced_assert("Failed to create main thread", create_result == pdPASS );
     REFERENCE_DEBUG_ONLY_VARIABLE( create_result );

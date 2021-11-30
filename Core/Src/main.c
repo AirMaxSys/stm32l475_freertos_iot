@@ -261,7 +261,7 @@ void module_test_task(void *arg)
     uint32_t read_count;
     uint32_t total_size = 0;
 
-    if ((res = f_mount(&fs, root_path, 0)) != FR_OK) {
+    if ((res = f_mount(&fs, root_path, 1)) != FR_OK) {
         printf("RES[%d] f_mount failure!\r\n", res);
     } else {
         if ((res = f_open(&fp, wifi_fw_path, FA_READ)) != FR_OK) {
@@ -359,21 +359,22 @@ int main(void)
     }
 #endif
     th_sensor_msg = xQueueCreate(1, sizeof(th_sensor_msg_buf));
-    if (th_sensor_msg == 0)
-    {
+    if (th_sensor_msg == 0) {
         printf("MSG queue of TH seonsor created failed!\n");
     }
 
-    //   wiced_scan_main();
-    //   tcp_socket_server_main();
+    // wiced_scan_main();
+    tcp_socket_server_main();
 
 #if USING_FREERTOS == 1
+#if 0
     xTaskCreate(module_test_task, "test module", 4096, NULL, 1, NULL);
     xTaskCreate(led_blink_task, "LED", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
-//    xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-//    xTaskCreate(gui_task, "GUI", 1280, NULL, 3, NULL);
+    // xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+    // xTaskCreate(gui_task, "GUI", 1280, NULL, 3, NULL);
 
     vTaskStartScheduler();
+#endif
 #endif
 
     /* USER CODE END 2 */

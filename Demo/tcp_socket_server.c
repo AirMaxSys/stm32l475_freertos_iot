@@ -37,17 +37,17 @@
 /* Constants */
 #define APP_THREAD_STACKSIZE        (1024)
 #define COUNTRY                     WICED_COUNTRY_AUSTRALIA
-#define HOSTIP_ADDR                 MAKE_IPV4_ADDR(192, 168, 8, 200)
-#define GW_ADDR                     MAKE_IPV4_ADDR(192, 168, 8, 1)
+#define HOSTIP_ADDR                 MAKE_IPV4_ADDR(192, 168, 31, 100)
+#define GW_ADDR                     MAKE_IPV4_ADDR(192, 168, 31, 1)
 #define NETMASK_ADDR                MAKE_IPV4_ADDR(255, 255, 255, 0)
 #define SERV_ADDR_BYTE0             (192)
 #define SERV_ADDR_BYTE1             (168)
-#define SERV_ADDR_BYTE2             (8)
-#define SERV_ADDR_BYTE3             (101)
+#define SERV_ADDR_BYTE2             (31)
+#define SERV_ADDR_BYTE3             (225)
 #define SERV_PORT_NUM               (8000)
 #define TCP_SOCKET_TASK_PRIORITY    (4)
 #define TCP_SOCKET_TASK_STACK_SIZE  (2048*4)
-#define AP_SSID                     "NMSL_saodeyi"
+#define AP_SSID                     "29-1-us"
 #define AP_PASSWD                   "11111111"
 
 /* Static functions declarations */
@@ -160,15 +160,17 @@ static void app_main(void)
 {
     if (config_wifi_lwip() < 0)
         return;
-#if 0 
+#if 0
     // Call lwip layer thread create funtion to initialize a new clinet thread
     sys_thread_new("tcp_socket", tcp_socket_task, NULL, \
             TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
 
-#endif
+#else
     // test mqtt
-    // sys_thread_new("mqtt_test", prvMQTTEchoTask, NULL,
-    //                TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
+#if 0
+    sys_thread_new("mqtt_test", prvMQTTEchoTask, NULL,
+                    TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
+#else    
     sys_thread_new("mqtt_th_sensor_task", mqttTHSensorTask, NULL,
                    TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
     sys_thread_new("led_blink_task", led_blink_task, NULL,
@@ -177,6 +179,8 @@ static void app_main(void)
                    2048 * 4, 4);
     sys_thread_new("sensor_task", temp_humi_smaple_task, NULL,
                    1024 * 4, 4);
+#endif
+#endif
 }
 
 int tcp_socket_server_main(void)
@@ -187,8 +191,7 @@ int tcp_socket_server_main(void)
     platform_init_mcu_infrastructure();
 
     /* Create an initial thread */
-    create_result = xTaskCreate(startup_thread, "app_thread",   \
-        (unsigned short)(APP_THREAD_STACKSIZE / sizeof( portSTACK_TYPE )),  \
+    create_result = xTaskCreate(startup_thread, "app_thread", APP_THREAD_STACKSIZE,  \
         NULL, DEFAULT_THREAD_PRIO, &startup_thread_handle);
 
     wiced_assert("Failed to create main thread", create_result == pdPASS );
