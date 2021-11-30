@@ -174,8 +174,8 @@ static void app_main(void)
     sys_thread_new("mqtt_th_sensor_task", mqttTHSensorTask, NULL,
                    TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
     sys_thread_new("led_blink_task", led_blink_task, NULL,
-                   512 * 4, 4);
-    sys_thread_new("lcd_blink", lcd_display_task, NULL,
+                   128 * 4, 4);
+    sys_thread_new("gui", gui_task, NULL,
                    2048 * 4, 4);
     sys_thread_new("sensor_task", temp_humi_smaple_task, NULL,
                    1024 * 4, 4);

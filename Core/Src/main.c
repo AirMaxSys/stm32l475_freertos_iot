@@ -364,14 +364,14 @@ int main(void)
     }
 
     // wiced_scan_main();
-    tcp_socket_server_main();
+    // tcp_socket_server_main();
 
 #if USING_FREERTOS == 1
-#if 0
-    xTaskCreate(module_test_task, "test module", 4096, NULL, 1, NULL);
+#if 1
+    // xTaskCreate(module_test_task, "test module", 4096, NULL, 1, NULL);
     xTaskCreate(led_blink_task, "LED", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
-    // xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-    // xTaskCreate(gui_task, "GUI", 1280, NULL, 3, NULL);
+    xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+    xTaskCreate(gui_task, "GUI", 1280, NULL, 3, NULL);
 
     vTaskStartScheduler();
 #endif
