@@ -150,7 +150,7 @@ void gui_task(void *argv)
     tft_lvgl_layer_init();
 
     gui_draw_temp_humi_icon_img(&img_temp, &img_humi);
-    gui_set_temp_humi_val_lb(&lb_temp, img_temp, &lb_humi, img_humi);
+    gui_setup_temp_humi_label(&lb_temp, &lb_humi);
 
     for (;;)
     {
@@ -158,7 +158,7 @@ void gui_task(void *argv)
         if (th_sensor_msg != 0)
             if (xQueueReceive(th_sensor_msg, th_sensor_msg_buf, pdMS_TO_TICKS(5)) == pdTRUE)
 #endif
-                gui_temp_humi_val_update(lb_temp, lb_humi, th_sensor_msg_buf);
+                gui_update_temp_humi_text(lb_temp, lb_humi, th_sensor_msg_buf);
         lv_task_handler();
     }
 }

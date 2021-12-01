@@ -32,6 +32,7 @@
         "ff.h": "c",
         "diskio.h": "c",
         "freertos.h": "c",
-        "stm32l475xx.h": "c"
+        "stm32l475xx.h": "c",
+        "gui.h": "c"
     }
 }
