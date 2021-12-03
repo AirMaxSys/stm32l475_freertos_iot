@@ -31,8 +31,8 @@
 #define SD_DO_PIN    GPIO_PIN_7
 
 /* SPI and DMA interrupt priority definitaion*/
-#define SD_SPI_IRQ_PRIORITY (configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 4) 
-#define SD_DMA_IRQ_PRIORITY (configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 4) 
+#define SD_SPI1_IRQ_PRIORITY    (9) 
+#define SD_DMA1_IRQ_PRIORITY    (9) 
 
 /* SDC/MMC commands definitaion*/
 #define CMD0        (0)         /* GO_IDLE_STATE */
@@ -205,7 +205,7 @@ static void sd_spi_init(void)
     }
 
     // Enable SPI interrupt
-    HAL_NVIC_SetPriority(SPI1_IRQn, SD_SPI_IRQ_PRIORITY, 0);
+    HAL_NVIC_SetPriority(SPI1_IRQn, SD_SPI1_IRQ_PRIORITY, 0);
     HAL_NVIC_EnableIRQ(SPI1_IRQn);
 
     // Register callback funtions
@@ -271,8 +271,8 @@ static void sd_dma_init(void)
     __HAL_LINKDMA(&hspi_sd, hdmarx, hdma_sd_txrx);
 
     // Enable DMA interrupt
-    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, SD_DMA_IRQ_PRIORITY, 1);
-    HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, SD_DMA_IRQ_PRIORITY, 1);
+    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, SD_DMA1_IRQ_PRIORITY, 1);
+    HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, SD_DMA1_IRQ_PRIORITY, 1);
     HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
     HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 }
@@ -385,7 +385,7 @@ static int sd_write(uint8_t *wbuf, uint8_t token)
         xSemaphoreTake(dmatx_sync_sem, portMAX_DELAY);
 #else
         while (!dmatx_sync_var);
-        dmatx_sync_var = 0
+        dmatx_sync_var = 0;
 #endif
         // Send dummy CRC
         HAL_SPI_TransmitReceive(&hspi_sd, dummy_tx, dummy_rx, 2, 0xFF);
@@ -436,7 +436,7 @@ static int sd_read(uint8_t *rbuf, uint32_t count)
     xSemaphoreTake(dmatxrx_sync_sem, portMAX_DELAY);
 #else
     while (!dmatxrx_sync_var);
-    dmatxrx_sync_var = 0
+    dmatxrx_sync_var = 0;
 #endif
     // Discard 2bytes CRC
     HAL_SPI_TransmitReceive(&hspi_sd, dummy_tx, dummy_rx, 2, 0xFF);
