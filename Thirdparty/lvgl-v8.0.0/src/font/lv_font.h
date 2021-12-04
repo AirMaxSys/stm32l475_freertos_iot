@@ -239,6 +239,9 @@ LV_FONT_DECLARE(lv_font_simsun_16_cjk)
 LV_FONT_CUSTOM_DECLARE
 #endif
 
+// Default font store in sd card
+extern const lv_font_t *p_font_montserrat14;
+
 /**
  * Just a wrapper around LV_FONT_DEFAULT because it might be more convenient to use a function is some cases
  * @return  pointer to LV_FONT_DEFAULT
