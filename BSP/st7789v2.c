@@ -39,6 +39,9 @@
 #define ST7789_PWR_PIN      GPIO_PIN_7
 /* ST7789 screen size defination*/
 #define ST7789_FILL_COLOR_SIZE  (ST7789_W) * (ST7789_H) / 10
+/* ST7789 interrupt priority definations*/
+#define ST7789_SPI3_IRQ_PRIORITY    6
+#define ST7789_DMA2_IRQ_PRIORITY    6
 
 /* ST7789 SPI DMA transmit done IRQ callback function*/
 void st7789_spi_dmatx_complete_cb(SPI_HandleTypeDef *hdma);
@@ -115,7 +118,7 @@ static void st7789_spi_init(void)
         // TODO: LOG error
         __NOP();
     }
-    HAL_NVIC_SetPriority(SPI3_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY, 0);
+    HAL_NVIC_SetPriority(SPI3_IRQn, ST7789_SPI3_IRQ_PRIORITY, 0);
     HAL_NVIC_EnableIRQ(SPI3_IRQn);
 
     // Register callback funtions
@@ -148,7 +151,7 @@ static void st7789_dma_init(void)
 
     __HAL_LINKDMA(&hspi_st7789, hdmatx, hdmatx_st7789);
 
-    HAL_NVIC_SetPriority(DMA2_Channel2_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY, 1);
+    HAL_NVIC_SetPriority(DMA2_Channel2_IRQn, ST7789_DMA2_IRQ_PRIORITY, 1);
     HAL_NVIC_EnableIRQ(DMA2_Channel2_IRQn);
 }
 

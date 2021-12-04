@@ -2,15 +2,40 @@
  * @file gui.c
 */
 
-#include "gui.h"
+#include "lvgl.h"
+#include "tft_lvgl_layer.h"
+#include "fs_lvgl_layer.h"
 
 /* GUI color defination*/
 #define GUI_COLOR_GREY              0x3B3B3Bu
 
 /* GUI assets filesystem directory defination*/
-#define GUI_TEMP_IMG_PATH           "1:/assets/img/icon/temperature.bin"
-#define GUI_HUMI_IMG_PATH           "1:/assets/img/icon/humidity.bin"
-#define GUI_MONTSERRAT48_FONT_PATH  "1:/assets/font/montserrat48.bin"
+/* @note "S:" string is LVGL filesystem checking demand*/
+#define GUI_TEMP_IMG_PATH           "S:1:/assets/icon/temp.bin"
+#define GUI_HUMI_IMG_PATH           "S:1:/assets/icon/humi.bin"
+#define GUI_MONTSERRAT14_FONT_PATH  "S:1:/assets/font/mont14.bin"
+#define GUI_MONTSERRAT48_FONT_PATH  "S:1:/assets/font/mont48.bin"
+
+const lv_font_t *p_font_montserrat14;
+const lv_font_t *p_font_montserrat48;
+
+/**
+ * @brief Initialize LVGL
+*/
+void gui_lvgl_init(void)
+{
+    // Initialize LVGL
+    lv_init();
+
+    // Initialize LVGL filesystem
+    lv_fs_if_fatfs_init();
+
+    // Load default font
+    p_font_montserrat14 = lv_font_load(GUI_MONTSERRAT14_FONT_PATH);
+
+    // Initialize lowlevel mmc driver
+    tft_lvgl_layer_init();
+}
 
 /**
  * @brief Get image binary file form sd card and draw icon
@@ -40,33 +65,30 @@ void gui_draw_temp_humi_icon_img(lv_obj_t **p_temp_icon, lv_obj_t **p_humi_icon)
 void gui_setup_temp_humi_label(lv_obj_t **p_lb_temp, lv_obj_t **p_lb_humi)
 {
     // Load text font
-    lv_font_t *p_montserrat_48_font = lv_font_load(GUI_MONTSERRAT48_FONT_PATH);
+    p_font_montserrat48 = lv_font_load(GUI_MONTSERRAT48_FONT_PATH);
 
     // Set up label text using style object
     static lv_style_t lb_style;
     lv_style_init(&lb_style);
-    lv_style_set_text_font(&lb_style, p_montserrat_48_font);
+    lv_style_set_text_font(&lb_style, p_font_montserrat48);
     lv_style_set_text_color(&lb_style, lv_color_hex(GUI_COLOR_GREY));
     lv_style_set_text_opa(&lb_style, LV_OPA_70);
 
     // Initialize temperature label
     lv_obj_t *lb_temp = lv_label_create(lv_scr_act());
     lv_obj_add_style(lb_temp, &lb_style, 0);
-    lv_obj_align(lb_temp, LV_ALIGN_BOTTOM_LEFT, 0, 50);
+    lv_obj_align(lb_temp, LV_ALIGN_BOTTOM_LEFT, 10, -50);
     lv_label_set_text(lb_temp, "0.0");
 
     // Initialize humidity label
     lv_obj_t *lb_humi = lv_label_create(lv_scr_act());
     lv_obj_add_style(lb_humi, &lb_style, 0);
-    lv_obj_align(lb_humi, LV_ALIGN_BOTTOM_RIGHT, 0, 50);
+    lv_obj_align(lb_humi, LV_ALIGN_BOTTOM_RIGHT, -10, -50);
     lv_label_set_text(lb_humi, "0.0");
 
     // Output labels object pointer
     *p_lb_temp = lb_temp;
     *p_lb_humi = lb_humi;
-
-    // Free font memory
-    lv_font_free(p_montserrat_48_font);
 }
 
 /**
