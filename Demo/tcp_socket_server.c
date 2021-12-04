@@ -70,10 +70,6 @@ extern int errno;
 extern void prvMQTTEchoTask(void *pvParameters);
 extern void mqttTHSensorTask(void *argv);
 // test othre task
-extern void gui_task(void *argv);
-extern void lcd_display_task(void *argv);
-extern void led_blink_task(void *argv);
-extern void temp_humi_smaple_task(void *argv);
 
 /* Function definitios*/
 static int config_wifi_lwip(void)
@@ -167,19 +163,8 @@ static void app_main(void)
 
 #else
     // test mqtt
-#if 0
     sys_thread_new("mqtt_test", prvMQTTEchoTask, NULL,
                     TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
-#else    
-    sys_thread_new("mqtt_th_sensor_task", mqttTHSensorTask, NULL,
-                   TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
-    sys_thread_new("led_blink_task", led_blink_task, NULL,
-                   128 * 4, 4);
-    sys_thread_new("gui", gui_task, NULL,
-                   2048 * 4, 4);
-    sys_thread_new("sensor_task", temp_humi_smaple_task, NULL,
-                   1024 * 4, 4);
-#endif
 #endif
 }
 

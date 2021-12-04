@@ -8,13 +8,17 @@
 #include "stm32l4xx_hal.h"
 
 // Wifi firmware storage path
-const char * const wifi_fw_path = "1:/wifi/43362A2.bin";
+#define WIFI_FW_PATH    "S:1:/assets/wifi/43362A2.bin"
+
+// Interrupt priority
+#define WIFI_SDMMC1_IRQ_PRIORITY    5
+#define WIFI_DMA2_IRQ_PRIORITY      5
 
 // Wireless chip image stored in external
 const resource_hnd_t wifi_firmware_image = { 
     .location = RESOURCE_IN_FILESYSTEM,
     .size = 213732,
-    .val.fs.filename = wifi_fw_path,
+    .val.fs.filename = WIFI_FW_PATH,
     .val.fs.offset = 0
 };
 
@@ -40,6 +44,6 @@ void platform_init_peripheral_irq_priorities(void)
 {
     // IRQ priority can not beyond configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY
     // because we will call FreeRTOS ISR API form IRQ handler
-    HAL_NVIC_SetPriority(SDMMC1_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY, 0);
-    HAL_NVIC_SetPriority(DMA2_Channel4_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1, 0);
+    HAL_NVIC_SetPriority(SDMMC1_IRQn, WIFI_SDMMC1_IRQ_PRIORITY, 0);
+    HAL_NVIC_SetPriority(DMA2_Channel4_IRQn,  WIFI_DMA2_IRQ_PRIORITY, 1);
 }

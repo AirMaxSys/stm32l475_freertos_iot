@@ -30,25 +30,15 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "gui.h"
-#include "lvgl.h"
-#include "tft_lvgl_layer.h"
-
-#include "aht10.h"
-#include "proj_config.h"
 #include "st7789v2.h"
-
-#include "FreeRTOS.h"
-#include "queue.h"
-#include "task.h"
-#include "timers.h"
-
+#include "aht10.h"
+#include "lvgl.h"
 #include "ff.h"
-
+#include "FreeRTOS.h"
+#include "task.h"
+#include "time.h"
+#include "queue.h"
+#include "proj_config.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,7 +46,7 @@
 
 extern int wiced_scan_main(void);
 extern int tcp_socket_server_main(void);
-extern int check_mmc_main (void);
+extern int iot_main(void);
 
 /* USER CODE END PTD */
 
@@ -72,8 +62,7 @@ extern int check_mmc_main (void);
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-QueueHandle_t th_sensor_msg;
-uint16_t th_sensor_msg_buf[2];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -84,48 +73,6 @@ void HAL_init_systick_for_RTX(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void led_blink_task(void *argv)
-{
-    (void)(argv);
-    while (1)
-    {
-        HAL_GPIO_WritePin(LED_red_GPIO_Port, LED_red_Pin, GPIO_PIN_RESET);
-        portDelayMs(500);
-        HAL_GPIO_WritePin(LED_red_GPIO_Port, LED_red_Pin, GPIO_PIN_SET);
-        portDelayMs(500);
-    }
-}
-
-void temp_humi_smaple_task(void *argv)
-{
-    (void)(argv);
-    aht10_t aht10;
-
-    // Wait sensor start work
-    portDelayMs(2000);
-
-    aht10_init(&aht10);
-
-    while (1)
-    {
-        // Smaple period
-        portDelayMs(1000);
-
-        aht10_get_value(&aht10);
-
-        // Put data to message queue
-        if (aht10.temp != 0 && aht10.humi != 0)
-        {
-            th_sensor_msg_buf[0] = aht10.temp;
-            th_sensor_msg_buf[1] = aht10.humi;
-#if USING_FREERTOS == 1
-            if (th_sensor_msg != 0)
-                xQueueSend(th_sensor_msg, th_sensor_msg_buf, 0);
-#endif
-        }
-    }
-}
-
 void lcd_display_task(void *argv)
 {
     st7789_init();
@@ -140,31 +87,9 @@ void lcd_display_task(void *argv)
     }
 }
 
-void gui_task(void *argv)
-{
-    (void)(argv);
-    lv_obj_t *lb_temp, *lb_humi;
-    lv_obj_t *img_temp, *img_humi;
-
-    lv_init();
-    tft_lvgl_layer_init();
-
-    gui_draw_temp_humi_icon_img(&img_temp, &img_humi);
-    gui_setup_temp_humi_label(&lb_temp, &lb_humi);
-
-    for (;;)
-    {
-#if USING_FREERTOS == 1
-        if (th_sensor_msg != 0)
-            if (xQueueReceive(th_sensor_msg, th_sensor_msg_buf, pdMS_TO_TICKS(5)) == pdTRUE)
-#endif
-                gui_update_temp_humi_text(lb_temp, lb_humi, th_sensor_msg_buf);
-        lv_task_handler();
-    }
-}
-
 void module_test_task(void *arg)
 {
+    (void)arg;
     // Test Fatfs basic functions
 #if 0
     uint8_t i;
@@ -250,10 +175,10 @@ void module_test_task(void *arg)
 #endif   
 
     // Test read wifi firmware bin file 43362A2.bin file size 213732bytes
-    FATFS fs;
+    static FATFS fs;
     FIL fp;
     const char *root_path = "1:/";
-    const char *wifi_fw_path = "1:/wifi/43362A2.bin";
+    const char *wifi_fw_path = "1:/assets/wifi/43362A2.bin";
     uint32_t res;
     const uint16_t read_chunk = 2048;
     uint8_t rbuf[read_chunk];
@@ -358,24 +283,13 @@ int main(void)
         }
     }
 #endif
-    th_sensor_msg = xQueueCreate(1, sizeof(th_sensor_msg_buf));
-    if (th_sensor_msg == 0) {
-        printf("MSG queue of TH seonsor created failed!\n");
-    }
 
     // wiced_scan_main();
     // tcp_socket_server_main();
+    
+    //module_test_task(NULL);
+    iot_main();
 
-#if USING_FREERTOS == 1
-#if 1
-    // xTaskCreate(module_test_task, "test module", 4096, NULL, 1, NULL);
-    xTaskCreate(led_blink_task, "LED", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
-    xTaskCreate(temp_humi_smaple_task, "TH sensor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-    xTaskCreate(gui_task, "GUI", 1280, NULL, 3, NULL);
-
-    vTaskStartScheduler();
-#endif
-#endif
 
     /* USER CODE END 2 */
 
