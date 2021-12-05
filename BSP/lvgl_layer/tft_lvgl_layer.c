@@ -18,8 +18,7 @@ void tft_lvgl_layer_init(void)
     // LVGL drawing buffer handler
     static lv_disp_draw_buf_t tft_disp_buf;
     // Using two buffer which one for DMA transfer data and another for MCU fill data
-    static lv_color_t tft_disp_buf1[TFT_LVGL_LAYER_DISP_HOR_RES*40];
-    static lv_color_t tft_disp_buf2[TFT_LVGL_LAYER_DISP_HOR_RES*40];
+    static lv_color_t tft_disp_buf1[TFT_LVGL_LAYER_DISP_HOR_RES*20];
 
     // LVGL layer display driver handler
     static lv_disp_drv_t tft_disp_drv;
@@ -28,7 +27,7 @@ void tft_lvgl_layer_init(void)
     st7789_init();
 
     // Init buffer for LVGL drawing
-    lv_disp_draw_buf_init(&tft_disp_buf, tft_disp_buf1, tft_disp_buf2, TFT_LVGL_LAYER_DISP_HOR_RES*40);
+    lv_disp_draw_buf_init(&tft_disp_buf, tft_disp_buf1, NULL, TFT_LVGL_LAYER_DISP_HOR_RES*20);
 
     // Init display driver basic items
     lv_disp_drv_init(&tft_disp_drv);
