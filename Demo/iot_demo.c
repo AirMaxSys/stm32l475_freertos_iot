@@ -32,6 +32,7 @@
 
 typedef struct sensor_msg {
     uint16_t th_buf[2];
+    xQueueHandle mutex;
 } sensor_msg_t;
 
 #define MAKE_IPV4_ADDR(a, b, c, d)  \
@@ -62,7 +63,9 @@ typedef struct sensor_msg {
 #define MQTT_MSG_PL_LEN         (50)
 
 static xTaskHandle startup_task_handle;
-static QueueHandle_t sensor_mailbox;
+static xTaskHandle mqtt_task_handle;
+static xTaskHandle gui_task_handle;
+static sensor_msg_t ssmsg;
 
 static void led_task(void *arg)
 {
@@ -79,7 +82,6 @@ static void led_task(void *arg)
 static void sensor_task(void *arg)
 {
     aht10_t aht10;
-    sensor_msg_t msg;
 
     (void)(arg);
 
@@ -96,9 +98,13 @@ static void sensor_task(void *arg)
 
         // Update mailbox content
         if (aht10.temp != 0 && aht10.humi != 0) {
-            msg.th_buf[0] = aht10.temp;
-            msg.th_buf[1] = aht10.humi;
-            if (sensor_mailbox) xQueueOverwrite(sensor_mailbox, &msg);
+            xSemaphoreTake(ssmsg.mutex, portMAX_DELAY);
+            ssmsg.th_buf[0] = aht10.temp;
+            ssmsg.th_buf[1] = aht10.humi;
+            xSemaphoreGive(ssmsg.mutex);
+            // Wakeup waitig tasks
+            xTaskNotifyGive(mqtt_task_handle);
+            xTaskNotifyGive(gui_task_handle);
         }
     }
 }
@@ -119,10 +125,8 @@ static void gui_task(void *arg)
     gui_setup_temp_humi_label(&lb_temp, &lb_humi);
 
     for (;;) {
-        if (sensor_mailbox) {
-            if (xQueuePeek(sensor_mailbox, &msg, pdMS_TO_TICKS(5)) == pdTRUE) {
-                gui_update_temp_humi_text(lb_temp, lb_humi, msg.th_buf);
-            }
+        if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) != 0) {
+            gui_update_temp_humi_text(lb_temp, lb_humi, ssmsg.th_buf);
         }
 
         // Update LVGL
@@ -142,7 +146,6 @@ static void mqtt_task(void *arg)
     int b_port = BROKER_PORT;
     uint32_t init_timeout = 30000;
     MQTTPacket_connectData connectData = MQTTPacket_connectData_initializer;
-    sensor_msg_t msg;
 
     (void)arg;
 
@@ -170,21 +173,19 @@ static void mqtt_task(void *arg)
     if (!res) printf("MQTT Connected\n");
 
     while (1) {
-        if (sensor_mailbox) {
-            if (xQueuePeek(sensor_mailbox, &msg, 0) == pdTRUE) {
-                MQTTMessage mq_msg;
-                float temp = msg.th_buf[0]/10.0-50;
-                float humi = msg.th_buf[1]/10.0;
-                char payload[MQTT_MSG_PL_LEN];
+        if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) != 0) {
+            MQTTMessage mq_msg;
+            float temp = ssmsg.th_buf[0] / 10.0 - 50;
+            float humi = ssmsg.th_buf[1] / 10.0;
+            char payload[MQTT_MSG_PL_LEN];
 
-                mq_msg.qos = 1;
-                mq_msg.retained = 0;
-                mq_msg.payload = payload;
-                snprintf(payload, MQTT_MSG_PL_LEN - 1, "%.1f %.1f", temp, humi);
-                mq_msg.payloadlen = strlen(payload);
-                if ((res = MQTTPublish(&client, TH_SENSOR_TOPIC, &mq_msg)) != 0) {
-                    printf("Return code from MQTT publish is %d\n", res);
-                }
+            mq_msg.qos = 1;
+            mq_msg.retained = 0;
+            mq_msg.payload = payload;
+            snprintf(payload, MQTT_MSG_PL_LEN - 1, "%.1f %.1f", temp, humi);
+            mq_msg.payloadlen = strlen(payload);
+            if ((res = MQTTPublish(&client, TH_SENSOR_TOPIC, &mq_msg)) != 0) {
+                printf("Return code from MQTT publish is %d\n", res);
             }
         }
         portYIELD();
@@ -257,23 +258,23 @@ static void app_main(void)
     setup_wifi_fw();
     setup_lwip_network_if();
 
-    // if (xTaskCreate(led_task, "LED", configMINIMAL_STACK_SIZE,  \
-    //         NULL, APP_TASK_LOW_PRIORITY, NULL) != pdTRUE) {
-    //     printf("LED task create failure!\n");
-    //     while (1);
-    // }
-    // if (xTaskCreate(sensor_task, "sensor", APP_TASK_DFT_STACKSIZE,  \
-    //         NULL, APP_TASK_HIGH_PRIORITY, NULL) != pdTRUE) {
-    //     printf("Sensor task create failure!\n");
-    //     while (1);
-    // }
-    // if (xTaskCreate(gui_task, "GUI", APP_TASK_HIGH_STACKSIZE,   \
-    //         NULL, 2, NULL) != pdTRUE) {
-    //     printf("GUI task create failure!\n");
-    //     while (1);
-    // }
+    if (xTaskCreate(led_task, "LED", configMINIMAL_STACK_SIZE,  \
+            NULL, APP_TASK_LOW_PRIORITY, NULL) != pdTRUE) {
+        printf("LED task create failure!\n");
+        while (1);
+    }
+    if (xTaskCreate(sensor_task, "sensor", APP_TASK_DFT_STACKSIZE,  \
+            NULL, APP_TASK_HIGH_PRIORITY, NULL) != pdTRUE) {
+        printf("Sensor task create failure!\n");
+        while (1);
+    }
+    if (xTaskCreate(gui_task, "GUI", APP_TASK_HIGH_STACKSIZE,   \
+            NULL, APP_TASK_DFT_PRIORITY, &gui_task_handle) != pdTRUE) {
+        printf("GUI task create failure!\n");
+        while (1);
+    }
     if (xTaskCreate(mqtt_task, "mqtt", APP_TASK_HIGH_STACKSIZE, \
-            NULL, APP_TASK_DFT_PRIORITY, NULL) != pdTRUE) {
+            NULL, APP_TASK_DFT_PRIORITY, &mqtt_task_handle) != pdTRUE) {
         printf("MQTT task create failure!\n");
         while (1);
     }
@@ -293,10 +294,10 @@ static void startup_task(void *arg)
         return;
     }
 
-    // Create mqtt messages queue
-    sensor_mailbox = xQueueCreate(1, sizeof(sensor_msg_t));
-    if (!sensor_mailbox) {
-        printf("Create sensor message mailbox failure!\n");
+    // Create sensor messages buffer mutex
+    ssmsg.mutex = xSemaphoreCreateMutex();
+    if (!ssmsg.mutex) {
+        printf("Create sensor meaages buffer mutex failure!\n");
         return;
     }
 
