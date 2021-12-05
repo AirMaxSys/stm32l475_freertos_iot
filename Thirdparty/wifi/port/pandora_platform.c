@@ -11,7 +11,7 @@
 
 // Interrupt priority
 #define WIFI_SDMMC1_IRQ_PRIORITY    5
-#define WIFI_DMA2_IRQ_PRIORITY      6
+#define WIFI_DMA2_IRQ_PRIORITY      5
 
 // Wireless chip image stored in external
 const resource_hnd_t wifi_firmware_image = { 
@@ -44,5 +44,5 @@ void platform_init_peripheral_irq_priorities(void)
     // IRQ priority can not beyond configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY
     // because we will call FreeRTOS ISR API form IRQ handler
     HAL_NVIC_SetPriority(SDMMC1_IRQn, WIFI_SDMMC1_IRQ_PRIORITY, 0);
-    HAL_NVIC_SetPriority(DMA2_Channel4_IRQn,  WIFI_DMA2_IRQ_PRIORITY, 0);
+    HAL_NVIC_SetPriority(DMA2_Channel4_IRQn,  WIFI_DMA2_IRQ_PRIORITY, 1);
 }
