@@ -285,10 +285,10 @@ int main(void)
 #endif
 
     // wiced_scan_main();
-    // tcp_socket_server_main();
+    tcp_socket_server_main();
     
-    //module_test_task(NULL);
-    iot_main();
+    // module_test_task(NULL);
+    // iot_main();
 
 
     /* USER CODE END 2 */

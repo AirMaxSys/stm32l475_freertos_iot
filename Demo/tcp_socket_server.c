@@ -30,6 +30,8 @@
 #include "lwip/err.h"
 #include "sys.h"
 
+#include "ff.h"
+
 /* Macros*/
 #define MAKE_IPV4_ADDR(a, b, c, d)  \
     (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | (uint32_t)(d))
@@ -156,7 +158,7 @@ static void app_main(void)
 {
     if (config_wifi_lwip() < 0)
         return;
-#if 0
+#if 1
     // Call lwip layer thread create funtion to initialize a new clinet thread
     sys_thread_new("tcp_socket", tcp_socket_task, NULL, \
             TCP_SOCKET_TASK_STACK_SIZE, TCP_SOCKET_TASK_PRIORITY);
@@ -199,6 +201,12 @@ static void startup_thread(void *argv)
     WPRINT_APP_INFO(("\nPlatform " PLATFORM " initialised\n"));
     WPRINT_APP_INFO(("Started FreeRTOS " FreeRTOS_VERSION "\n"));
     WPRINT_APP_INFO(("Starting LwIP " LwIP_VERSION "\n"));
+
+    // static FATFS fs;
+    // if (f_mount(&fs, "1:/", 0) != FR_OK) {
+    //     WPRINT_APP_INFO(("Fatfs mount filesystem failure!\n"));
+    //     return;
+    // }
 
     /* Create a semaphore to signal when LwIP has finished initialising */
     lwip_done_sema = xSemaphoreCreateCounting(1, 0);
