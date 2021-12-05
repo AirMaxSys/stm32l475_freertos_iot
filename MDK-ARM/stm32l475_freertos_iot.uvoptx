@@ -152,18 +152,50 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>73</LineNumber>
+          <LineNumber>38</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
+          <Address>134323078</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\BSP\gui\gui.c</Filename>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\mqtt\paho.mqtt.embedded-c-1.1.0\MQTTClient-C\src\MQTTClient.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/mqtt/paho.mqtt.embedded-c-1.1.0/MQTTClient-C/src/MQTTClient.c\38</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>1064</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134303398</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\lwip-STABLE-2_1_2_RELEASE\src\api\api_lib.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/lwip-STABLE-2_1_2_RELEASE/src/api/api_lib.c\1064</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>299</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134324914</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Thirdparty\wifi\WICED\network\LwIP\WWD\FreeRTOS\sys_arch.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\stm32l475_freertos_iot\../Thirdparty/wifi/WICED/network/LwIP/WWD/FreeRTOS/sys_arch.c\299</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -665,7 +697,7 @@
 
   <Group>
     <GroupName>Application/MDK-ARM</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1109,7 +1141,7 @@
       <GroupNumber>8</GroupNumber>
       <FileNumber>66</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Thirdparty\FreeRTOS\FreeRTOS-Kernel\source\tasks.c</PathWithFileName>
@@ -3265,7 +3297,7 @@
 
   <Group>
     <GroupName>Test</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

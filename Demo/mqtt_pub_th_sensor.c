@@ -13,15 +13,15 @@
 #include "MQTTClient.h"
 
 #define BROKER_HOSTNAME     "192.168.31.225"   // 192.168.8.101
-#define CLINET_ID           "PANDOR_TH_SENSOR_BOARD"
+#define CLINET_ID           "PANDORA_BOARD"
 #define MQTT_USERNAME       "billy"
 #define MQTT_PASSWD         "password"
 #define TH_SENSOR_TOPIC     "dev/th_sensor"
 
 #define MQTT_MSG_PALOAD_BUF_LEN (50)
 
-extern QueueHandle_t th_sensor_msg;
-extern uint16_t th_sensor_msg_buf[2];
+QueueHandle_t th_sensor_msg;
+uint16_t th_sensor_msg_buf[2];
 
 void thSensorMsgArrived(MessageData *data)
 {

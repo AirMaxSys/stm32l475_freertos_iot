@@ -100,14 +100,14 @@ extern "C" {
  * per active UDP "connection".
  * (requires the LWIP_UDP option)
  */
-#define MEMP_NUM_UDP_PCB               10
+#define MEMP_NUM_UDP_PCB               1
 
 /**
  * MEMP_NUM_TCP_PCB: the number of TCP protocol control blocks. One
  * per active TCP "connection".
  * (requires the LWIP_TCP option)
  */
-#define MEMP_NUM_TCP_PCB               10
+#define MEMP_NUM_TCP_PCB               1
 
 /**
  * MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP segments.
@@ -241,7 +241,7 @@ extern "C" {
 #ifdef TX_PACKET_POOL_SIZE
 #define TCP_SND_BUF                    LWIP_MAX((2 * TCP_MSS), ((TX_PACKET_POOL_SIZE/2) * TCP_MSS))
 #else
-#define TCP_SND_BUF                    (6 * TCP_MSS)
+#define TCP_SND_BUF                    (2 * TCP_MSS)
 #endif
 
 /**
@@ -288,6 +288,7 @@ extern "C" {
 /**
  * LWIP_IPV6==1: Enable IPv6
  */
+#define DISABLE_IPV6
 #ifdef DISABLE_IPV6
 #define LWIP_IPV6                       0
 #else
@@ -316,14 +317,14 @@ extern "C" {
 /**
  * LWIP_DHCP==1: Enable DHCP module.
  */
-#define LWIP_DHCP                      (1)
+#define LWIP_DHCP                      (0)
 
 /* WICED likes to enable AUTOIP */
 #ifdef AUTO_IP_ENABLED
 /**
  * LWIP_AUTOIP==1: Enable AutoIP module.
  */
-#   define LWIP_AUTOIP                 (1)
+#   define LWIP_AUTOIP                 (0)
 
 /* Note: Not enabling LWIP_DHCP_AUTOIP_COOP on purpose */
 #endif /* AUTO_IP_ENABLED */
@@ -360,13 +361,13 @@ extern "C" {
  * their destination address) to finish.
  * (requires the ARP_QUEUEING option)
  */
-#define MEMP_NUM_ARP_QUEUE              5
+#define MEMP_NUM_ARP_QUEUE              2
 
 /**
  * MEMP_NUM_NETCONN: the number of struct netconns.
  * (only needed if you use the sequential API, like api_lib.c)
  */
-#define MEMP_NUM_NETCONN               (18)
+#define MEMP_NUM_NETCONN               (5)
 
 /**
  * LWIP_SO_RCVTIMEO==1: Enable receive timeout for sockets/netconns and
@@ -455,8 +456,6 @@ extern "C" {
  * By default enable debug printing for debug build, but set level to off
  * This allows user to change any desired debug level to on.
  */
-
-#define WICED_LWIP_DEBUG
 
 #ifdef WICED_LWIP_DEBUG
 #define LWIP_DEBUG
