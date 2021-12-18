@@ -1,23 +1,13 @@
-# STM32L475VET Pandora Board
+# STM32L475_RREERTOS_IOT
 
 ## RTOS
 
-### RTX brief
+### FreeRTOS brief
 
-[CMSIS_5](https://github.com/ARM-software/CMSIS_5/releases/tag/5.7.0) RTOS_v2 RTX_5.5.2
+- version: [FreeRTOS v10.4.4](https://github.com/FreeRTOS/FreeRTOS-Kernel/releases/tag/V10.4.4)
 
-[CMSOS-RTOS2 documentation page](https://arm-software.github.io/CMSIS_5/RTOS2/html/index.html)
+- Manual: [FreeRTOS refrence Manual](Docs/RTOS/FreeRTOS_Reference_Manual_V10.0.0.pdf)
 
-### RTX port to stm32L475VET
+- Web: [FreeRTOS kernel web page](https://www.freertos.org/RTOS.html)
 
-- Make sure stm32cubeMX dones't generete three NVIC handler which are SVC PendSV and SysTick. If you want to HAL_Delay or LL_mDelay function, you can select one TIM as no RTOS timebase of MCU.
-
-- Add SVC PendSV and SysTick NVIC handler assambly file form RTOS/RTX/Source/ARM/irq_cm4f.s to MDK-ARM project. If you want to use GCC or IAR tool set, then select the appropriate file.
-
-- Add RTX source file to your project which from directory RTOS/RTX/Source.
-
-- Add config file from RTOS/RTX/RTX_Config.c (not necessary).
-
-- Add RTX os tick functions implement which from directory Drivers/CMSIS/RTOS2/Source/os_systick.c
-
-- Add header files path to your project.
+### FreeRTOS port to stm32L475
