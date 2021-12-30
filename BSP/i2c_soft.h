@@ -1,7 +1,6 @@
 #ifndef _I2C_SOFT_H_
 #define	_I2C_SOFT_H_
 
-#include "main.h"
 #include "common.h"
 #include <stdint.h>
 

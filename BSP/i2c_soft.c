@@ -1,30 +1,37 @@
 #include "i2c_soft.h"
+#include "stm32l4xx_hal.h"
+#include "proj_config.h"
 
 i2c_soft_t *p_i2c_sf;
 
-/* GPIO output and input level*/
+// Definations of GPIO output/input methods
 #define PIN_HI(port, pin)   HAL_GPIO_WritePin((port), (pin), GPIO_PIN_SET)
 #define PIN_LO(port, pin)   HAL_GPIO_WritePin((port), (pin), GPIO_PIN_RESET)
 #define PIN_RD(port, pin)   (HAL_GPIO_ReadPin((port), (pin)) == GPIO_PIN_SET) ? 1 : 0
 
-/* control I2C SDA GPIO mode*/
-#define SDA_OUT()    do {           \
-    GPIOC->MODER &= ~(3<<(1*2));	\
-    GPIOC->MODER |= 1<<(1*2);	    \
+// Definations of I2C SDA GPIO mode
+#define SDA_OUT()   do {    \
+    GPIOC->MODER &= (uint32_t)(~(3<<(1*2)));    \
+    GPIOC->MODER |= (uint32_t)(1<<(1*2));   \
 } while (0)
 
-#define SDA_IN()    do {            \
-    GPIOC->MODER &= ~(3<<(1*2));    \
-    GPIOC->MODER |= 0<<(1*2);       \
+#define SDA_IN()    do {    \
+    GPIOC->MODER &= (uint32_t)(~(3<<(1*2)));    \
+    GPIOC->MODER |= (uint32_t)(0<<(1*2));   \
 } while (0)
 
-/* delay tiny duration*/
 static void delay(void)
 {
+    // Control I2C speed
+#if 1
+    volatile uint32_t i = 10000;
+    while (i--) __asm volatile ("nop");
+#else
     volatile uint16_t i, j;
     for (i = 0; i < 100; ++i)
         for (j = 0; j < 100; ++j)
-            __asm volatile ("nop");
+            __asm volatile("nop");
+#endif
 }
 
 i2c_soft_err_enum_t i2c_soft_init(i2c_soft_t *i2c)
@@ -180,6 +187,12 @@ i2c_soft_err_enum_t i2c_soft_send_datas(uint8_t *buffer, uint16_t len, uint8_t s
 {
     uint8_t res =  I2C_SOFT_ERR_NONE;
 
+#ifdef USING_FREERTOS
+    portDISABLE_INTERRUPTS();
+#else
+   __disable_irq();
+#endif
+
     // master generete start condition
     i2c_soft_gen_start_cond();
 
@@ -187,7 +200,7 @@ i2c_soft_err_enum_t i2c_soft_send_datas(uint8_t *buffer, uint16_t len, uint8_t s
     if (i2c_soft_master_send_addr7(I2C_SOFT_WRITE_MODE) != 0) {
         res = I2C_SOFT_ERR_ADDR_AF;
         i2c_soft_gen_stop_cond();
-        return res;
+        goto exit;
     }
 
     // send datas
@@ -201,6 +214,14 @@ i2c_soft_err_enum_t i2c_soft_send_datas(uint8_t *buffer, uint16_t len, uint8_t s
     // master generete stop condition
     if (stop_en)
         i2c_soft_gen_stop_cond();
+
+exit:
+#ifdef USING_FREERTOS
+    portENABLE_INTERRUPTS();
+#else
+    __enable_irq();
+#endif
+
     return res;
 }
 
@@ -208,23 +229,29 @@ i2c_soft_err_enum_t i2c_soft_recv_datas(uint8_t *rxbuf, uint16_t len)
 {
     uint8_t res =  I2C_SOFT_ERR_NONE;
 
-    // master generete start condition
+#ifdef USING_FREERTOS
+    portDISABLE_INTERRUPTS();
+#else
+   __disable_irq();
+#endif
+
+    // Master device generete start condition signal
     i2c_soft_gen_start_cond();
 
-    /* send slave address*/
+    // Send slave device address
     if (i2c_soft_master_send_addr7(I2C_SOFT_READ_MODE) != 0) {
         res = I2C_SOFT_ERR_ADDR_AF;
         i2c_soft_gen_stop_cond();
-        return res;
+        goto exit;
     }
 
-    /* check data length */
+    // check data length
     if (len == 0)
         i2c_soft_gen_stop_cond();
 
-    /* receive datas*/
+    // receive datas
     for (uint16_t i = 0; i < len; ++i) {
-        /* master receive last byte*/
+        // master receive last byte
         if (i == len - 1) {
             // fetch data and send nack
             rxbuf[i] = i2c_soft_recv_byte(0);
@@ -233,5 +260,13 @@ i2c_soft_err_enum_t i2c_soft_recv_datas(uint8_t *rxbuf, uint16_t len)
         }
         rxbuf[i] = i2c_soft_recv_byte(1);
     }
+
+exit:
+#ifdef USING_FREERTOS
+    portENABLE_INTERRUPTS();
+#else
+    __enable_irq();
+#endif
+
     return res;
 }
