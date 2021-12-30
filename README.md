@@ -1,4 +1,4 @@
-# STM32L475_FREERTOS_IOT
+# stm32l475_freertos_iot
 
 ## Development environment
 
