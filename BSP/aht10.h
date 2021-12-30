@@ -6,12 +6,15 @@ extern "C" {
 #endif
 
 #include "i2c_soft.h"
-#include "main.h"
-#include <string.h>
+#include "stm32l4xx_hal.h"
 #include <stdint.h>
-#include <stdio.h>
 
 #define AHT10_BUFFER_SIZE	6u
+
+#define AHT10_I2C_CLK_PORT      GPIOD
+#define AHT10_I2C_CLK_PIN       GPIO_PIN_6
+#define AHT10_I2C_SDA_PORT      GPIOC
+#define AHT10_I2C_SDA_PIN       GPIO_PIN_1
 
 typedef struct aht10 {
 	uint16_t temp;
