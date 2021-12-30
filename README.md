@@ -16,15 +16,15 @@ GNU
 
 ## RTOS
 
-FreeRTOS brief
+FreeRTOS synopsis
 
 - Version: [FreeRTOS v10.4.4](https://github.com/FreeRTOS/FreeRTOS-Kernel/releases/tag/V10.4.4)
 
-- Manual: [FreeRTOS refrence Manual](Docs/RTOS/FreeRTOS_Reference_Manual_V10.0.0.pdf)
+- Manual: [FreeRTOS reference Manual](Docs/RTOS/FreeRTOS_Reference_Manual_V10.0.0.pdf)
 
-- Web: [FreeRTOS kernel web page](https://www.freertos.org/RTOS.html)
+- Web: [FreeRTOS website](https://www.freertos.org/RTOS.html)
 
-FreeRTOS port to stm32L475
+FreeRTOS port
 
 - Get FreeRTOS kernel source code.
 
@@ -35,7 +35,7 @@ that means we should use GCC portable files. So enter the ```GCC``` subdurectory
 
 - Get FreeRTOSConfig.h file. In FreeRTOS github repositories can find many [usage demo](https://github.com/FreeRTOS/FreeRTOS/tree/main/FreeRTOS/Demo), according to your toolchain and MCU/MPU architecture entern one appropriate demo and get the FreeRTOSConfig.h file.
 
-- Configure RTOS. Make sure the following macros are defined in FreeRTOSConfig.h file. Other customisation configuration options can refer to FreeRTOS configuration [website](https://www.freertos.org/a00110.html)
+- Configure RTOS. Make sure the following macros are defined in FreeRTOSConfig.h file. Other customisation configuration options can refer to FreeRTOS configuration [website](https://www.freertos.org/a00110.html).
 
 ``` cpp
 #define xPortPendSVHandler PendSV_Handler
