@@ -673,6 +673,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\fatfs_lowlevel_drv\mmc.c</FilePath>
             </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\led.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

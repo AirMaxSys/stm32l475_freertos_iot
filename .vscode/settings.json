@@ -35,6 +35,8 @@
         "stm32l475xx.h": "c",
         "gui.h": "c",
         "lvgl.h": "c",
-        "fs_lvgl_layer.h": "c"
+        "fs_lvgl_layer.h": "c",
+        "aht10.h": "c",
+        "common.h": "c"
     }
 }

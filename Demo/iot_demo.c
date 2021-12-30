@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "stm32l4xx_hal.h"
+
 #include "aht10.h"
 #include "st7789v2.h"
+#include "led.h"
 
 #include "FreeRTOS.h"
 #include "queue.h"
@@ -71,11 +74,9 @@ static void led_task(void *arg)
 {
     (void)(arg);
 
+    led_init();
     while (1) {
-        HAL_GPIO_WritePin(LED_red_GPIO_Port, LED_red_Pin, GPIO_PIN_RESET);
-        portDelayMs(500);
-        HAL_GPIO_WritePin(LED_red_GPIO_Port, LED_red_Pin, GPIO_PIN_SET);
-        portDelayMs(500);
+        led_green_blink(500);
     }
 }
 
@@ -251,8 +252,6 @@ static void iot_tcpip_init_done_cb(void *arg)
     xSemaphoreGive(*sema);
 }
 
-extern void prvMQTTEchoTask(void *pvParameters);
-
 static void app_main(void)
 {
     setup_wifi_fw();
@@ -274,7 +273,7 @@ static void app_main(void)
         while (1);
     }
     if (xTaskCreate(mqtt_task, "mqtt", APP_TASK_HIGH_STACKSIZE, \
-            NULL, APP_TASK_DFT_PRIORITY, &mqtt_task_handle) != pdTRUE) {
+            NULL, APP_TASK_HIGH_PRIORITY, &mqtt_task_handle) != pdTRUE) {
         printf("MQTT task create failure!\n");
         while (1);
     }

@@ -66,12 +66,6 @@ void Error_Handler(void);
 #define WIFI_INT_GPIO_Port GPIOC
 #define BEEP_Pin GPIO_PIN_2
 #define BEEP_GPIO_Port GPIOB
-#define LED_red_Pin GPIO_PIN_7
-#define LED_red_GPIO_Port GPIOE
-#define LED_green_Pin GPIO_PIN_8
-#define LED_green_GPIO_Port GPIOE
-#define LED_blue_Pin GPIO_PIN_9
-#define LED_blue_GPIO_Port GPIOE
 #define NRF_CLK_Pin GPIO_PIN_13
 #define NRF_CLK_GPIO_Port GPIOB
 #define NRF_MISO_Pin GPIO_PIN_14
@@ -90,10 +84,6 @@ void Error_Handler(void);
 #define NRF_CE_GPIO_Port GPIOD
 #define NRF_CS_Pin GPIO_PIN_5
 #define NRF_CS_GPIO_Port GPIOD
-#define AHT10_IIC_CLK_Pin GPIO_PIN_6
-#define AHT10_IIC_CLK_GPIO_Port GPIOD
-#define I2C_SOFT_SDA_Port GPIOC
-#define I2C_SOFT_SDA_Pin GPIO_PIN_1
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
