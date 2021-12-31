@@ -24,18 +24,23 @@
 
 // Local I2C object pointer
 static i2c_soft_t *p_i2c_sf;
+static TIM_HandleTypeDef timer1;
+static const uint16_t tick_cnt = 1300;
+
+#include <stdio.h>
 
 static void delay(void)
 {
     // Control I2C speed
 #if 1
+    __HAL_TIM_ENABLE(&timer1);
+    while (__HAL_TIM_GET_COUNTER(&timer1) < tick_cnt)
+        ;
+    __HAL_TIM_DISABLE(&timer1);
+    __HAL_TIM_SET_COUNTER(&timer1, 0);
+#else
     volatile uint32_t i = 10000;
     while (i--) __asm volatile ("nop");
-#else
-    volatile uint16_t i, j;
-    for (i = 0; i < 100; ++i)
-        for (j = 0; j < 100; ++j)
-            __asm volatile("nop");
 #endif
 }
 
@@ -47,6 +52,22 @@ i2c_soft_err_enum_t i2c_soft_init(i2c_soft_t *i2c)
 		return I2C_SOFT_ERR_GPIO_PORT;
 	if (i2c->addr_len != 7 && i2c->addr_len != 10)
 		return I2C_SOFT_ERR_ADDR_LEN;
+
+    __HAL_RCC_TIM1_CLK_ENABLE();
+
+    uint32_t sysclk = HAL_RCC_GetSysClockFreq();
+    TIM_ClockConfigTypeDef clock_source = {0};
+
+    timer1.Instance = TIM1;
+    timer1.Channel = HAL_TIM_ACTIVE_CHANNEL_1;
+    timer1.Init.Prescaler = (sysclk/1000000UL)-1;
+    timer1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    timer1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    timer1.Init.CounterMode = TIM_COUNTERMODE_UP;
+    timer1.Init.Period = 0xFFFF;
+    HAL_TIM_Base_Init(&timer1);
+    clock_source.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+    HAL_TIM_ConfigClockSource(&timer1, &clock_source);
 
     // GPIO clock enable
     __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -138,7 +159,7 @@ static int8_t i2c_soft_send_byte(uint8_t byte)
 {
     SDA_OUT(p_i2c_sf->sda->port, p_i2c_sf->sda->pin);
     PIN_LO(p_i2c_sf->scl->port, p_i2c_sf->scl->pin);
-
+#if 0
     for (int8_t i = 7; i >= 0; --i) {
         if ((byte & 0x80) >> 7)
             PIN_HI(p_i2c_sf->sda->port, p_i2c_sf->sda->pin);
@@ -148,6 +169,16 @@ static int8_t i2c_soft_send_byte(uint8_t byte)
         PIN_HI(p_i2c_sf->scl->port, p_i2c_sf->scl->pin);
         PIN_LO(p_i2c_sf->scl->port, p_i2c_sf->scl->pin);
     }
+#else
+    for (uint8_t bit = 0x80; bit != 0; bit >>= 1) {
+        if (byte & bit)
+            PIN_HI(p_i2c_sf->sda->port, p_i2c_sf->sda->pin);
+        else 
+            PIN_LO(p_i2c_sf->sda->port, p_i2c_sf->sda->pin);
+        PIN_HI(p_i2c_sf->scl->port, p_i2c_sf->scl->pin);
+        PIN_LO(p_i2c_sf->scl->port, p_i2c_sf->scl->pin);
+    }
+#endif
     if (i2c_soft_wait_ack() != 0) {
         return -1;
     }
@@ -156,22 +187,21 @@ static int8_t i2c_soft_send_byte(uint8_t byte)
 
 static uint8_t i2c_soft_recv_byte(uint8_t ack_en)
 {
-    uint8_t ret = 0;
+    uint8_t byte = 0;
 
     SDA_IN(p_i2c_sf->sda->port, p_i2c_sf->sda->pin);
-    for (int8_t i = 7; i >= 0; --i) {
+    for (uint8_t bit = 0; bit < 8; ++bit) {
         PIN_LO(p_i2c_sf->scl->port, p_i2c_sf->scl->pin);
         PIN_HI(p_i2c_sf->scl->port, p_i2c_sf->scl->pin);
-        ret <<= 1;
-        if (PIN_RD(p_i2c_sf->sda->port, p_i2c_sf->sda->pin))
-            ret++;
+        byte <<= 1;
+        byte += PIN_RD(p_i2c_sf->sda->port, p_i2c_sf->sda->pin);
     }
     if (ack_en)
         i2c_soft_send_ack();
     else
         i2c_soft_send_nack();
 
-    return ret;
+    return byte;
 }
 
 static int8_t i2c_soft_master_send_addr7(i2c_soft_mode_enum_t mode)
