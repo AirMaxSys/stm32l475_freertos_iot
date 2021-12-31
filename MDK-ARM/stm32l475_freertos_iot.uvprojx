@@ -1673,6 +1673,16 @@
               <FileType>1</FileType>
               <FilePath>..\Test\mqtt_clinet_test.c</FilePath>
             </File>
+            <File>
+              <FileName>fatfs_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Test\fatfs_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_driver_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Test\lcd_driver_test.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
