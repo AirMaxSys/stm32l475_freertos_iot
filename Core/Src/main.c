@@ -20,11 +20,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-#include "i2c.h"
-#include "quadspi.h"
-#include "sai.h"
-#include "sdmmc.h"
-#include "spi.h"
 #include "usart.h"
 #include "usb_otg.h"
 
@@ -32,24 +27,14 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 
-#include "st7789v2.h"
-#include "aht10.h"
 #include "lvgl.h"
-#include "ff.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "time.h"
-#include "queue.h"
-#include "proj_config.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
-extern int wiced_scan_main(void);
-extern int tcp_socket_server_main(void);
-extern int iot_main(void);
-
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -70,169 +55,21 @@ extern int iot_main(void);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void HAL_init_systick_for_RTX(void);
+static void HAL_init_systick_for_RTX(void);
+
+/*Extern demo task funtions declarations*/
+extern int wiced_scan_main(void);
+extern int tcp_socket_server_main(void);
+extern int iot_main(void);
+/*Extern test funtions declarations*/
+extern void fatfs_test_task(void *arg);
+extern void lcd_drv_test_task(void *argv);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void lcd_display_task(void *argv)
-{
-    st7789_init();
-    for (;;)
-    {
-        st7789_fill_color(COLOR_BLUE);
-        portDelayMs(1000);
-        st7789_fill_color(COLOR_BRED);
-        portDelayMs(1000);
-        st7789_fill_color(COLOR_CYAN);
-        portDelayMs(1000);
-    }
-}
 
-void module_test_task(void *arg)
-{
-    (void)arg;
-    // Test Fatfs basic functions
-#if 0
-    uint8_t i;
-    FATFS fs;
-    DIR dir;
-    FIL fp;
-    uint32_t res;
-    uint32_t written, readcount;
-    const char *path = "1:/DOC";
-    const char *rwpath = "1:/DOC/test_fatfs.txt";
-    const char *create_file_path = "1:/DOC/create_test.txt";
-    const char wbuf[] = "The key to a successful open "
-        "technology project is to ensure a neutral playing "
-        "field for all developers, technologists, and companies "
-        "to collectively contribute to project evolution and growth. "
-        "The Linux Foundation was built on the idea of the democratization"
-        "of code and scaling adoption, for all projects equally. Expert "
-        "legal and governance support programs ensure everyone is on the "
-        "same playing field.\n";
-    char rbuf[1024];
-
-    if ((res = f_mount(&fs, "1:/", 0)) == FR_OK) {
-        if ((res = f_opendir(&dir, path)) == FR_OK) {
-            static FILINFO fno;
-
-            do {
-                if ((res = f_readdir(&dir, &fno)) != FR_OK) {
-                    printf("RES:%d f_readdir error!\r\n", res);
-                    break;
-                } else if (fno.fname[0] != '\0') {
-                    printf("%s\r\n", fno.fname);
-                }
-            } while (fno.fname[0]);
-        } else {
-            printf("RES:%d f_opendir error!\r\n", res);
-        }
-        f_closedir(&dir);
-        // Write data (mode a)
-        res = f_open(&fp, rwpath, FA_WRITE | FA_OPEN_APPEND);
-        if (res != FR_OK) {
-            printf("RES:%d f_open to write error!\r\n", res);
-        } else {
-            if ((res = f_write(&fp, wbuf, sizeof(wbuf), &written)) != FR_OK)
-                printf("RES:%d f_write error!\r\n", res);
-            else
-                printf("f_write[%d] Written[%d] success!\r\n", sizeof(wbuf), written);
-
-            f_close(&fp);
-        }
-
-        // Read data
-        res = f_open(&fp, rwpath, FA_READ);
-        if (res != FR_OK) {
-            printf("RES:%d f_open to read error!\r\n", res);
-        } else {
-            if ((res = f_read(&fp, rbuf, 1024, &readcount)) != FR_OK)
-                printf("RES:%d f_read error!\r\n", res);
-            else {
-                printf("f_read[1024] Readden[%d] success!\r\n", readcount);
-                rbuf[1023] = '\0';
-                printf("%s", rbuf);
-            }
-            f_close(&fp);
-        }
-
-        // Create file
-        res = f_open(&fp, create_file_path, FA_WRITE | FA_OPEN_ALWAYS);
-        if (res != FR_OK) {
-            printf("RES:%d f_open to create file error!\r\n", res);
-        } else {
-            if ((res = f_write(&fp, wbuf, sizeof(wbuf), &written)) != FR_OK)
-                printf("RES:%d f_write error!\r\n", res);
-            else
-                printf("f_write[%d] Written[%d] success!\r\n", sizeof(wbuf), written);
-
-            f_close(&fp);
-        }
-    } else {
-        printf("RES:%d f_mount error!\r\n", res);
-    }
-
-    f_unmount("1:/");
-#endif   
-
-    // Test read wifi firmware bin file 43362A2.bin file size 213732bytes
-    static FATFS fs;
-    FIL fp;
-    const char *root_path = "1:/";
-    const char *wifi_fw_path = "1:/assets/wifi/43362A2.bin";
-    uint32_t res;
-    const uint16_t read_chunk = 2048;
-    uint8_t rbuf[read_chunk];
-    uint8_t count = 0;
-    uint32_t read_count;
-    uint32_t total_size = 0;
-
-    if ((res = f_mount(&fs, root_path, 1)) != FR_OK) {
-        printf("RES[%d] f_mount failure!\r\n", res);
-    } else {
-        if ((res = f_open(&fp, wifi_fw_path, FA_READ)) != FR_OK) {
-            printf("RES[%d] f_open %s failure!\r\n", res, wifi_fw_path);
-        } else {
-            puts("Start read...");
-            do {
-                if ((res = f_read(&fp, rbuf, read_chunk, &read_count)) != FR_OK) {
-                    printf("RES[%d] count[%d] f_read failure!\r\n", ++count, res);
-                    break;
-                } else {
-                    total_size += read_count;
-                } 
-            } while (read_chunk == read_count);
-            puts("End read...");
-            puts("wifi frameware total size 213732 bytes");
-            printf("Read total size %d\r\n", total_size);
-            printf("Last time read contents count[%d]:\r\n", read_count);
-            // Out put last time read 50 bytes
-            if (read_count >= 50) {
-                for (uint8_t i = 0; i < 50; ++i) {
-                    if ((i+1) % 10)
-                        printf("%02x ", rbuf[read_count-50+i]);
-                    else
-                        printf("%02x\r\n", rbuf[read_count-50+i]);
-                }
-            } else {
-                for (uint8_t i = 0; i < read_count; ++i) {
-                    if ((i+1) % 10)
-                        printf("%02x ", rbuf[i]);
-                    else
-                        printf("%02x\r\n", rbuf[i]);
-                }
-            }
-
-            f_close(&fp);
-        }
-        f_unmount(root_path);
-    }
-
-    for (;;) {
-        portDelayMs(10000);
-    }
-} 
 /* USER CODE END 0 */
 
 /**
@@ -267,74 +104,18 @@ int main(void)
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
 
-#if 0
-#include "stdlib.h"
-    
-    static uint16_t counter = 0;
-    uint16_t var;
-    while (1) {
-        var++;
-        th_sensor_msg_buf[0] = 0xc00;
-        char *ptr = (char *)malloc(1024);
-        if (ptr != NULL) {
-            counter ++;
-            printf("Malloc total size: %dKb\n", counter);
-            ptr = NULL;
-        } else {
-            while(1);
-        }
-    }
-#endif
-
     // wiced_scan_main();
     // tcp_socket_server_main();
-    
-    // module_test_task(NULL);
     iot_main();
-
 
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
 
-#if TEST_ST7789_DRIVER == 1
-    st7789_init();
-#endif
-
-#if (TEST_LVGL_LIB == 1) && (TEST_RTX_RTOS == 0)
-    lv_init();
-    tft_lvgl_layer_init();
-    lv_example_get_started_1();
-    lv_example_get_started_3();
-#endif
-
     while (1)
     {
         /* USER CODE END WHILE */
-#if TEST_ST7789_DRIVER == 1
-        st7789_fill_color(COLOR_BLUE);
-        HAL_Delay(50);
-        st7789_fill_color(COLOR_BRED);
-        HAL_Delay(50);
-        st7789_fill_color(COLOR_CYAN);
-        HAL_Delay(50);
-        st7789_fill_color(COLOR_YELLOW);
-        HAL_Delay(50);
-        st7789_draw_line(50, 70, 200, 70);
-        st7789_draw_line(10, 70, 10, 120);
-        st7789_draw_line(100, 20, 120, 50);
-        st7789_draw_rectangle(50, 80, 200, 160);
-        st7789_draw_line(50, 80, 200, 160);
-        st7789_draw_line(50, 160, 200, 80);
-        for (int i = 0; i < 20; ++i)
-            st7789_draw_point(200 + i, 200, COLOR_GBLUE);
-        HAL_Delay(1000);
-#endif
-#if (TEST_LVGL_LIB == 1) && (TEST_RTX_RTOS == 0)
-        HAL_Delay(2);
-        lv_task_handler();
-#endif
         /* USER CODE BEGIN 3 */
     }
     /* USER CODE END 3 */
@@ -406,7 +187,7 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 // Init SystemTick
-void HAL_init_systick_for_RTX(void)
+static void HAL_init_systick_for_RTX(void)
 {
     uint32_t sysclk = HAL_RCC_GetSysClockFreq();
     SysTick_Config(sysclk / 1000);
