@@ -235,7 +235,7 @@ void vApplicationIdleHook(void)
     vTaskSetTimeOutState(&timeout);
     if (xTaskCheckForTimeOut(&timeout, &fix_period) == pdTRUE)
     {
-        printf("Remain %.1fKb!\n", xPortGetFreeHeapSize() / 1024.0);
+        printf("OS remain %.1fKb!\n", xPortGetFreeHeapSize() / 1024.0);
         fix_period = pdMS_TO_TICKS(1000);
     }
 }
