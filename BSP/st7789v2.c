@@ -24,24 +24,27 @@
 #endif
 
 /* ST7789 SPI bus related GOIO definations*/
-#define ST7789_CS_PORT      GPIOD
-#define ST7789_CS_PIN       GPIO_PIN_7
-#define ST7789_CLK_PORT     GPIOB
-#define ST7789_CLK_PIN      GPIO_PIN_3
-#define ST7789_MOSI_PORT    GPIOB
-#define ST7789_MOSI_PIN     GPIO_PIN_5
+#define ST7789_CS_PORT              GPIOD
+#define ST7789_CS_PIN               GPIO_PIN_7
+#define ST7789_CLK_PORT             GPIOB
+#define ST7789_CLK_PIN              GPIO_PIN_3
+#define ST7789_MOSI_PORT            GPIOB
+#define ST7789_MOSI_PIN             GPIO_PIN_5
 /* ST7789 device related GPIO definations*/
-#define ST7789_DC_PORT      GPIOB
-#define ST7789_DC_PIN       GPIO_PIN_4
-#define ST7789_RST_PORT     GPIOB
-#define ST7789_RST_PIN      GPIO_PIN_6
-#define ST7789_PWR_PORT     GPIOB
-#define ST7789_PWR_PIN      GPIO_PIN_7
+#define ST7789_DC_PORT              GPIOB
+#define ST7789_DC_PIN               GPIO_PIN_4
+#define ST7789_RST_PORT             GPIOB
+#define ST7789_RST_PIN              GPIO_PIN_6
+#define ST7789_PWR_PORT             GPIOB
+#define ST7789_PWR_PIN              GPIO_PIN_7
 /* ST7789 screen size defination*/
-#define ST7789_FILL_COLOR_SIZE  (ST7789_W) * (ST7789_H) / 10
+#define ST7789_FILL_COLOR_SIZE      (ST7789_W) * (ST7789_H) / 10
 /* ST7789 interrupt priority definations*/
 #define ST7789_SPI3_IRQ_PRIORITY    6
 #define ST7789_DMA2_IRQ_PRIORITY    6
+
+#define MAX_DMA_CHUNK_SIZE          65535
+
 
 /* ST7789 SPI DMA transmit done IRQ callback function*/
 void st7789_spi_dmatx_complete_cb(SPI_HandleTypeDef *hdma);
@@ -367,37 +370,39 @@ void st7789_set_window(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
 void st7789_transfer_datas(uint8_t buffer[], uint32_t bufsize)
 {
     uint8_t *pbuf = buffer;
-    const uint16_t chunk_size = 65535u;
 
     // Setting DC pin high to transmit data and select SPI CS
     st7789_dc_data();
     st7789_select();
 
-    // ST HAL LIB API of SPI transmisson only allow data size less than 65535
-    if (bufsize > chunk_size) {
-        while (bufsize > chunk_size) {
-            HAL_SPI_Transmit_DMA(&hspi_st7789, pbuf, chunk_size);
-            // Using FreeRTOS counting semaphore to wait transmit done
-            // Then start transferring next data chunk
-#if USING_FREERTOS == 1
-            xSemaphoreTake(sem_dmatx_cmp, portMAX_DELAY);
-#else
-            // Using global variable to wait transmit done
-            while (!wait_dmatx_cmp);
-            wait_dmatx_cmp = 0;
-#endif
-            bufsize -= chunk_size;
-            pbuf += chunk_size;
+    while (bufsize > MAX_DMA_CHUNK_SIZE) {
+        if (HAL_SPI_Transmit_DMA(&hspi_st7789, pbuf, MAX_DMA_CHUNK_SIZE) != HAL_OK) {
+            // TODO: LOG ERROR
+            goto error;
         }
+        // Using FreeRTOS counting semaphore to wait transmit done
+        // Then start transferring next data chunk
+#if USING_FREERTOS == 1
+        xSemaphoreTake(sem_dmatx_cmp, portMAX_DELAY);
+#else
+        // Using global variable to wait transmit done
+        while (!wait_dmatx_cmp);
+        wait_dmatx_cmp = 0;
+#endif
+        bufsize -= MAX_DMA_CHUNK_SIZE;
+        pbuf += MAX_DMA_CHUNK_SIZE;
     }
-    HAL_SPI_Transmit_DMA(&hspi_st7789, pbuf, bufsize);
+    if (bufsize || HAL_SPI_Transmit_DMA(&hspi_st7789, pbuf, bufsize) != HAL_OK)
+        goto error;
+
 #if USING_FREERTOS == 1
     xSemaphoreTake(sem_dmatx_cmp, portMAX_DELAY);
 #else
     while (!wait_dmatx_cmp);
     wait_dmatx_cmp = 0;
 #endif
-    
+
+error:
     // Unselect SPI CS pin
     st7789_unselect();
 }
