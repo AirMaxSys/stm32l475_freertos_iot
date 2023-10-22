@@ -1,11 +1,11 @@
 #ifndef _ST7789V2_H_
 #define _ST7789V2_H_
 
+#include <stdint.h>
+
 #ifdef  _cplusplus
 extern "C" {
 #endif
-
-#include <stdint.h>
 
 #define ST7789_W    240
 #define ST7789_H    240

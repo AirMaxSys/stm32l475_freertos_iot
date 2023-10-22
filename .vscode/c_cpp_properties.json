@@ -9,6 +9,7 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
+                "STM32L475xx",
                 "LWIP_NETCONN=1",
                 "LWIP_SOCKET=1",
                 "__CC_ARM"
@@ -17,7 +18,8 @@
             "compilerPath": "D:\\software\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.27.29110\\bin\\Hostx64\\x64\\cl.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "windows-msvc-x64"
+            "intelliSenseMode": "windows-msvc-x64",
+            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
     "version": 4
