@@ -106,7 +106,9 @@ int main(void)
 
     // wiced_scan_main();
     // tcp_socket_server_main();
-    iot_main();
+    // iot_main();
+    xTaskCreate(lcd_drv_test_task, "lcd", 512, NULL, 3, NULL);
+    vTaskStartScheduler();
 
     /* USER CODE END 2 */
 
