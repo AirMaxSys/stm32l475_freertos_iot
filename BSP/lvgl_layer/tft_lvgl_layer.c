@@ -43,25 +43,25 @@ void tft_lvgl_layer_init(void)
 static void tft_flush_cb(struct _lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p)
 {
     // Checking parameters
-    if(area->x1 > TFT_LVGL_LAYER_DISP_HOR_RES - 1) return;
-    if(area->y1 > TFT_LVGL_LAYER_DISP_VER_RES - 1) return;
-    if(area->x2 < 0) return;
-    if(area->y2 < 0) return;
-
-    // Truncate the area according to screen size
-    uint16_t act_x1 = area->x1 < 0 ? 0 : area->x1;
-    uint16_t act_y1 = area->y1 < 0 ? 0 : area->y1;
-    uint16_t act_x2 = area->x2 > TFT_LVGL_LAYER_DISP_HOR_RES - 1 ? TFT_LVGL_LAYER_DISP_HOR_RES - 1 : area->x2;
-    uint16_t act_y2 = area->y2 > TFT_LVGL_LAYER_DISP_VER_RES - 1 ? TFT_LVGL_LAYER_DISP_VER_RES - 1 : area->y2;
-
-    uint8_t *pbuf = (uint8_t *)color_p;
-    uint32_t bufsize = 2*(act_x2-act_x1+1)*(act_y2-act_y1+1);
+    if (!disp_drv || !area || !color_p)
+        return;
+    if (area->x1 < 0 || area->x1 > TFT_LVGL_LAYER_DISP_HOR_RES - 1)
+        return;
+    if (area->x2 < 0 || area->x2 > TFT_LVGL_LAYER_DISP_HOR_RES - 1)
+        return;
+    if (area->y1 < 0 || area->y1 > TFT_LVGL_LAYER_DISP_HOR_RES - 1)
+        return;
+    if (area->y2 < 0 || area->y2 > TFT_LVGL_LAYER_DISP_HOR_RES - 1)
+        return;
+    if (area->x2 < area->x1 || area->y1 < area->y2)
+        return;
 
     // Set address of drawing window
-    st7789_set_window(act_x1, act_y1, act_x2, act_y2);
+    st7789_set_window(area->x1, area->y1, area->x2, area->y2);
 
     // Transfer data with DMA
-    st7789_transfer_datas(pbuf, bufsize);
+    st7789_transfer_datas((uint8_t *)color_p,   \
+        sizeof(lv_color_t) * (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1));
 
     // Inform LVGL that flushing ready
     lv_disp_flush_ready(disp_drv);
