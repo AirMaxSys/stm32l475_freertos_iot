@@ -369,41 +369,37 @@ void st7789_set_window(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
  */
 void st7789_transfer_datas(uint8_t buffer[], uint32_t bufsize)
 {
-    uint8_t *pbuf = buffer;
+    uint16_t xfer_len = 0;
 
     // Setting DC pin high to transmit data and select SPI CS
     st7789_dc_data();
     st7789_select();
 
-    while (bufsize > MAX_DMA_CHUNK_SIZE) {
-        if (HAL_SPI_Transmit_DMA(&hspi_st7789, pbuf, MAX_DMA_CHUNK_SIZE) != HAL_OK) {
-            // TODO: LOG ERROR
+    while (bufsize > 0) {
+        if (bufsize > MAX_DMA_CHUNK_SIZE)
+            xfer_len = MAX_DMA_CHUNK_SIZE;
+        else
+            xfer_len = bufsize;
+
+        // TODO: LOG ERROR
+        if (HAL_SPI_Transmit_DMA(&hspi_st7789, buffer, xfer_len) != HAL_OK)
             goto error;
-        }
+
+#if USING_FREERTOS == 1
         // Using FreeRTOS counting semaphore to wait transmit done
         // Then start transferring next data chunk
-#if USING_FREERTOS == 1
         xSemaphoreTake(sem_dmatx_cmp, portMAX_DELAY);
 #else
         // Using global variable to wait transmit done
         while (!wait_dmatx_cmp);
         wait_dmatx_cmp = 0;
 #endif
-        bufsize -= MAX_DMA_CHUNK_SIZE;
-        pbuf += MAX_DMA_CHUNK_SIZE;
-    }
-    if (bufsize || HAL_SPI_Transmit_DMA(&hspi_st7789, pbuf, bufsize) != HAL_OK)
-        goto error;
 
-#if USING_FREERTOS == 1
-    xSemaphoreTake(sem_dmatx_cmp, portMAX_DELAY);
-#else
-    while (!wait_dmatx_cmp);
-    wait_dmatx_cmp = 0;
-#endif
+        bufsize -= xfer_len;
+        buffer += xfer_len;
+    }
 
 error:
-    // Unselect SPI CS pin
     st7789_unselect();
 }
 

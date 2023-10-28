@@ -411,7 +411,6 @@ static int sd_write(uint8_t *wbuf, uint8_t token)
 static int sd_read(uint8_t *rbuf, uint32_t count)
 {
     uint8_t *ptr = rbuf;
-    const uint16_t chunk = 65535;
     uint8_t token = 0;
     uint8_t dummy_rx[2] = {0};
     uint8_t dummy_tx[FATFS_CHUNK_SIZE];

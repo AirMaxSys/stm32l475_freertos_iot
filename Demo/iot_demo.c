@@ -254,9 +254,6 @@ static void iot_tcpip_init_done_cb(void *arg)
 
 static void app_main(void)
 {
-    setup_wifi_fw();
-    setup_lwip_network_if();
-
     if (xTaskCreate(led_task, "LED", configMINIMAL_STACK_SIZE,  \
             NULL, APP_TASK_LOW_PRIORITY, NULL) != pdTRUE) {
         printf("LED task create failure!\n");
@@ -311,6 +308,9 @@ static void startup_task(void *arg)
     xSemaphoreTake(lwip_done_sema, portMAX_DELAY);
     // Delete semaphore
     vQueueDelete(lwip_done_sema);
+
+    setup_wifi_fw();
+    setup_lwip_network_if();
 
     app_main();
 
