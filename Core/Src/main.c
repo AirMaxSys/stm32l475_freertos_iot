@@ -31,6 +31,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "st7789v2.h"
+#include "led.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -103,10 +106,13 @@ int main(void)
     MX_GPIO_Init();
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
+    
+    st7789_init();
+    led_init();
 
     // wiced_scan_main();
     // tcp_socket_server_main();
-    iot_main();
+//    iot_main();
 
     /* USER CODE END 2 */
 
@@ -117,6 +123,20 @@ int main(void)
     {
         /* USER CODE END WHILE */
         /* USER CODE BEGIN 3 */
+        uint32_t ts = HAL_GetTick();
+        st7789_fill_color( COLOR_RED );
+        uint32_t fps = 1000 /( HAL_GetTick() - ts);
+        led_blue_blink(500);
+        st7789_fill_color( COLOR_BLUE );
+        led_blue_blink(500);
+        st7789_fill_color( COLOR_GREEN );
+        led_blue_blink(500);
+        st7789_fill_color( COLOR_WHITE );
+        led_blue_blink(500);
+        st7789_fill_color( COLOR_BLACK );
+        led_blue_blink(500);
+        printf("fps:%d freq:%dMhz\n", fps, HAL_RCC_GetSysClockFreq()/1000000);
+    
     }
     /* USER CODE END 3 */
 }

@@ -413,18 +413,14 @@ error:
 */
 void st7789_fill_color(uint16_t color)
 {
-    uint8_t data[2] = {0};
     uint8_t buf[ST7789_FILL_COLOR_SIZE] = {0};
-
-    data[0] = color >> 8;
-    data[1] = color;
 
     st7789_set_window(0, 0, ST7789_W - 1, ST7789_H - 1);
 
     // Fill transmission buffer
     for (uint16_t i = 0; i < ST7789_FILL_COLOR_SIZE / 2; ++i) {
-        buf[i * 2] = data[0];
-        buf[i * 2 + 1] = data[1];
+        buf[i * 2] = color >> 8;
+        buf[i * 2 + 1] = color;
     }
 
     // Setting DC pin high to transmit data and select SPI CS

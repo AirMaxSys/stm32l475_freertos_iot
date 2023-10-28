@@ -222,7 +222,7 @@ i2c_soft_err_enum_t i2c_soft_send_datas(uint8_t *buffer, uint16_t len, uint8_t s
 {
     uint8_t res =  I2C_SOFT_ERR_NONE;
 
-#ifdef USING_FREERTOS
+#if USING_FREERTOS == 1
     portDISABLE_INTERRUPTS();
 #else
    __disable_irq();
@@ -252,7 +252,7 @@ i2c_soft_err_enum_t i2c_soft_send_datas(uint8_t *buffer, uint16_t len, uint8_t s
         i2c_soft_gen_stop_cond();
 
 exit:
-#ifdef USING_FREERTOS
+#if SING_FREERTOS == 1
     portENABLE_INTERRUPTS();
 #else
     __enable_irq();
@@ -267,7 +267,7 @@ i2c_soft_err_enum_t i2c_soft_recv_datas(uint8_t *rxbuf, uint16_t len)
     
     if (0 == len)   return res;
 
-#ifdef USING_FREERTOS
+#if USING_FREERTOS == 1
     portDISABLE_INTERRUPTS();
 #else
    __disable_irq();
@@ -296,7 +296,7 @@ i2c_soft_err_enum_t i2c_soft_recv_datas(uint8_t *rxbuf, uint16_t len)
     }
 
 exit:
-#ifdef USING_FREERTOS
+#if USING_FREERTOS == 1
     portENABLE_INTERRUPTS();
 #else
     __enable_irq();

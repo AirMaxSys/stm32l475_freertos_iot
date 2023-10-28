@@ -10,15 +10,15 @@
       <TargetName>stm32l475_freertos_iot</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pArmCC>6130001::V6.13.1::.\ARMCLANG</pArmCC>
-      <pCCUsed>6130001::V6.13.1::.\ARMCLANG</pCCUsed>
+      <pArmCC>6160000::V6.16::ARMCLANG</pArmCC>
+      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32L475VETx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32L4xx_DFP.2.5.0</PackID>
-          <PackURL>https://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32L4xx_DFP.2.6.1</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x20017FFF) IRAM2(0x10000000-0x10007FFF) IROM(0x8000000-0x807FFFF) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -186,6 +186,7 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -352,7 +353,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -1704,5 +1705,14 @@
     </components>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>stm32l475_freertos_iot</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>

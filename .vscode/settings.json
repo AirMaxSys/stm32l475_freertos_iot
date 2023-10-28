@@ -37,6 +37,7 @@
         "lvgl.h": "c",
         "fs_lvgl_layer.h": "c",
         "aht10.h": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "wwd_wifi.h": "c"
     }
 }
