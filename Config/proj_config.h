@@ -2,9 +2,9 @@
 #define _PROJ_CONFIG_H_
 
 #define USING_CMSIS_RTOS2   0
-#define USING_FREERTOS      0
+#define USING_FREERTOS      1
 #define USING_UCOSIII       0
-#define USING_ST_HAL_LIB	1
+#define USING_ST_HAL_LIB	0
 
 #if USING_CMSIS_RTOS2 == 1
     #include "cmsis_os2.h"
